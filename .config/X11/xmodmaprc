@@ -1,0 +1,8 @@
+remove MOD1 = Alt_R
+remove control = Control_R
+clear lock
+keycode 108 = Super_R
+keycode 105 = Alt_R
+keycode 66 = Control_R
+add control = Control_R
+add MOD1 = Alt_R

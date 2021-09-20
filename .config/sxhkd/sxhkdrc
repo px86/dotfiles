@@ -1,0 +1,27 @@
+
+# `brightness`, `volctrl` and `screenshot` are custom scripts, using `brightnessctl`, `pulsemixer` and `maim` under the hood.
+
+XF86MonBrightness{Up,Down}
+	brightness {up,down}
+
+XF86AudioMute
+	volctrl toggle
+
+XF86Audio{Raise,Lower}Volume
+	volctrl {up,down}
+
+# XF86Audio{Prev,Play,Next}
+
+{_,super} + Print
+	screenshot {_,-s}
+
+super + o ; {e,d,w,p,h,i,m,f,t}
+	{emacs,\
+	emacsclient -ca '',\
+	firefox,\
+	firefox --private-window,\
+	spacefm,\
+	sxiv -bt $(xdg-user-dir PICTURES)/Wallpapers/,\
+	deadbeef,\
+	walc,\
+	telegram}

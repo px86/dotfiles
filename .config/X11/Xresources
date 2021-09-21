@@ -1,11 +1,11 @@
-!xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx!
-!							 !
+!--------------------------------------------------------!
+!                                                        !
 !   \ \/ /_ __ ___  ___  ___  _   _ _ __ ___ ___  ___ 	 !
 !    \  /| '__/ _ \/ __|/ _ \| | | | '__/ __/ _ \/ __|	 !
 !    /  \| | |  __/\__ \ (_) | |_| | | | (_|  __/\__ \	 !
 !   /_/\_\_|  \___||___/\___/ \__,_|_|  \___\___||___/	 !
-!							 !
-!xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx!
+!                                                        !
+!--------------------------------------------------------!
 
 ! Dracula Theme
 *.foreground: #F8F8F2
@@ -28,9 +28,9 @@
 *.color15:    #E6E6E6
 
 
-!xxxxxxxxxxxxxxxxxxxxx!
+!---------------------!
 ! XTERM CONFIGURATION !
-!xxxxxxxxxxxxxxxxxxxxx!
+!---------------------!
 
 XTerm*termName: xterm-256color
 *customization: -color
@@ -91,7 +91,7 @@ xterm*pointerShape: XTerm
 xterm*bellIsUrgent: false
 xterm*bellSupressTime: 100
 xterm*marginBell: false
-xterm*visualBell: true
+xterm*visualBell: false
 
 ! Text highlighting
 xterm*highlightColor: XtDefaultForeground

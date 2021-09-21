@@ -9,7 +9,7 @@
 "        \▓▓   \▓▓ \▓▓▓▓▓▓▓ \▓▓▓▓▓▓     \▓    \▓▓\▓▓  \▓▓  \▓▓
 "                                                             
 "
-"--------------------------------------------------------------------
+" --------------------------------------------------------------------
                                                       
 
 filetype plugin indent on
@@ -38,7 +38,7 @@ set cursorline
 set laststatus=1
 
 set background=dark
-colorscheme one
+colorscheme dracula
 
 "set noshowmode
 

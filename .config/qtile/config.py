@@ -160,7 +160,7 @@ layouts = [
     layout.Columns(
         fair=False,
         num_columns=2,
-        border_width=1,
+        border_width=2,
         border_focus='#8abeb7',
         border_on_single=0,
         margin=4,
@@ -180,7 +180,7 @@ layouts = [
 # widget defaults #
 widget_defaults = dict(
     font='CaskaydiaCove Nerd Font Bold',
-    fontsize=12,
+    fontsize=14,
     padding=4,
 )
 
@@ -200,7 +200,7 @@ main_bar = bar.Bar(
             padding=0,
             disable_drag=True,
             active='#bbbbbb',
-            inactive='#666666',
+            inactive='#888888',
             this_current_screen_border='#ffffff',
             highlight_method='text',
             urgent_alert_method='text',
@@ -218,7 +218,6 @@ main_bar = bar.Bar(
             fontsize=14,
             prompt='>_ ',
             foreground=FG2,
-            background=BG1,
         ),
 
         widget.Spacer(),
@@ -235,25 +234,20 @@ main_bar = bar.Bar(
 
         widget.Wlan(
             interface='wlp2s0',
-            format='直 ',
-            disconnected_message='睊 ',
+            format='{essid}',
+            disconnected_message='none',
             update_interval=10,
-            fontsize=18,
+            fmt='Network:{}',
             foreground=FG4,
         ),
 
         widget.Sep(),
 
-        widget.TextBox(
-            text='',
-            fontsize=20,
-            foreground=FG1,
-        ),
-
         widget.Memory(
             format='{MemUsed:.0f}M',
             measure_mem='M',
             update_interval=10.0,
+            fmt='Memory:{}',
             foreground=FG1,
         ),
 

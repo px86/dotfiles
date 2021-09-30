@@ -163,7 +163,8 @@ layouts = [
         num_columns=2,
         border_width=2,
         border_focus='#ff3377',
-        border_on_single=0,
+        border_normal=BG1,
+        border_on_single=False,
         margin=0,
         margin_on_single=0,
     ),
@@ -239,7 +240,7 @@ main_bar = bar.Bar(
             format='{essid}',
             disconnected_message='none',
             update_interval=10,
-            fmt='Network:{}',
+            fmt='NET:{}',
             foreground=FG4,
         ),
 
@@ -249,7 +250,7 @@ main_bar = bar.Bar(
             format='{MemUsed:.0f}M',
             measure_mem='M',
             update_interval=10.0,
-            fmt='Memory:{}',
+            fmt='MEM:{}',
             foreground=FG1,
         ),
 
@@ -261,7 +262,8 @@ main_bar = bar.Bar(
             discharge_char='',
             format='{char} {percent:2.0%}',
             update_interval=60,
-            foreground=FG3,
+            fmt='BAT:{}',
+            foreground=FG2,
         ),
     ],
 )

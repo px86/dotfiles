@@ -80,7 +80,7 @@ XTerm*color7:     #BFBFBF
 XTerm*color15:    #E6E6E6
 
 ! Cursor
-xterm*cursorColor: reverse
+xterm*cursorColor: #ffffff
 xterm*cursorBlink: false
 !xterm*cursorOffTime: 300
 !xterm*cursorOnTime: 800

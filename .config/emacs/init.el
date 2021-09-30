@@ -32,8 +32,8 @@
 (setq initial-scratch-message "")
 
 ;; Set frame transparency
-(set-frame-parameter (selected-frame) 'alpha '(95 . 95))
-(add-to-list 'default-frame-alist `(alpha . (95 . 95)))
+(set-frame-parameter (selected-frame) 'alpha '(100 . 100))
+(add-to-list 'default-frame-alist `(alpha . (100 . 100)))
 
 (defun pr/set-font-faces ()
   "Sets font faces."

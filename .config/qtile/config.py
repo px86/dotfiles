@@ -26,7 +26,8 @@ TERMINAL = "xterm"
 
 # colors
 BAR_BG = '#000000'
-BG1 = '#3b4252'
+BG1 = '#282A36'
+BG2 = '#3b4252'
 FG1 = '#ebcb8b'
 FG2 = '#d995cd'
 FG3 = '#5af78e'
@@ -161,12 +162,13 @@ layouts = [
         fair=False,
         num_columns=2,
         border_width=2,
-        border_focus='#8abeb7',
+        border_focus='#ff3377',
         border_on_single=0,
-        margin=4,
-        margin_on_single=8,
+        margin=0,
+        margin_on_single=0,
     ),
     layout.Max(),
+    layout.Bsp(),
     layout.Floating(
         border_width=2,
         border_focus='#ff0077',
@@ -191,12 +193,12 @@ extension_defaults = widget_defaults.copy()
 main_bar = bar.Bar(
     size=20,
     opacity=1.0,
-    background=BAR_BG,
+    background=BG1,
 
     # WIDGETS #
     widgets=[
         widget.GroupBox(
-            fontsize=26,
+            fontsize=28,
             padding=0,
             disable_drag=True,
             active='#bbbbbb',

@@ -51,7 +51,7 @@ groups = [
                 opacity=0.95,
             ),
         ]),
-    Group("1", label=''),
+    Group("1", label=''),
     Group("2", label='', matches=[
         Match(wm_class=[
             "Zathura",
@@ -76,13 +76,13 @@ groups = [
             "gimp.bin",
         ]),
     ]),
-    Group("7", label=''),
-    Group("8", label='', matches=[
+    Group("7", label='', matches=[
         Match(wm_class=[
             "walc",
             "TelegramDesktop",
         ]),
     ]),
+    Group("8", label=''),
 ]  # 'groups' end
 
 # ---------------------------------------------------------------------------
@@ -199,8 +199,9 @@ main_bar = bar.Bar(
     # WIDGETS #
     widgets=[
         widget.GroupBox(
-            fontsize=28,
-            padding=0,
+            font='CaskaydiaCove Nerd Font',
+            fontsize=18,
+            padding=1,
             disable_drag=True,
             active='#bbbbbb',
             inactive='#888888',

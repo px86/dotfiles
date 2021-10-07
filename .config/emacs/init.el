@@ -278,6 +278,7 @@
   (dolist (language '(("el" . "src emacs-lisp")
                       ("py" . "src python")
                       ("sh" . "src shell")
+                      ("js" . "src js")
                       ("cpp" . "src C++ :includes <iostream>")))
     (add-to-list 'org-structure-template-alist language)))
 
@@ -359,10 +360,22 @@
 (use-package evil-nerd-commenter
   :bind ("M-/" . evilnc-comment-or-uncomment-lines))
 
+(defun pr-prettify-setup ()
+  "Set default prettify symbols."
+  (setq-default prettify-symbols-alist '(("lambda" . ?λ)
+                                         ("->" . ?→)
+                                         ("=>" . ?⇒)
+                                         ("!=" . ?≠)
+                                         ("==" . ?≡)
+                                         ("<=" . ?≤)
+                                         (">=" . ?≥))))
+(pr-prettify-setup)
+
 (add-hook 'prog-mode-hook
           (lambda ()
             (hl-line-mode)
             (display-line-numbers-mode t)
+            (prettify-symbols-mode)
             (electric-pair-local-mode)))
 
 (use-package web-mode

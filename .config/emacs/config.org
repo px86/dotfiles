@@ -398,6 +398,7 @@
     (dolist (language '(("el" . "src emacs-lisp")
                         ("py" . "src python")
                         ("sh" . "src shell")
+                        ("js" . "src js")
                         ("cpp" . "src C++ :includes <iostream>")))
       (add-to-list 'org-structure-template-alist language)))
 #+end_src
@@ -517,13 +518,29 @@
     :bind ("M-/" . evilnc-comment-or-uncomment-lines))
 #+end_src
 
-** Line Numbering & Auto Pairing
+** Prettify-symbols setup
+
+#+begin_src emacs-lisp
+  (defun pr-prettify-setup ()
+    "Set default prettify symbols."
+    (setq-default prettify-symbols-alist '(("lambda" . ?λ)
+                                           ("->" . ?→)
+                                           ("=>" . ?⇒)
+                                           ("!=" . ?≠)
+                                           ("==" . ?≡)
+                                           ("<=" . ?≤)
+                                           (">=" . ?≥))))
+  (pr-prettify-setup)
+#+end_src
+
+** Line numbering, auto pairing etc.
 
 #+begin_src emacs-lisp
   (add-hook 'prog-mode-hook
             (lambda ()
               (hl-line-mode)
               (display-line-numbers-mode t)
+              (prettify-symbols-mode)
               (electric-pair-local-mode)))
 #+end_src
 

@@ -51,14 +51,14 @@ groups = [
                 opacity=0.95,
             ),
         ]),
-    Group("1", label=''),
+    Group("1", label='', layout='max'),
     Group("2", label='', matches=[
         Match(wm_class=[
             "Zathura",
             "libreoffice",
         ]),
     ]),
-    Group("3", label='', matches=[
+    Group("3", label='', layout='max', matches=[
         Match(wm_class=[
             "firefox",
             "Firefox-esr",
@@ -169,7 +169,6 @@ layouts = [
         margin_on_single=0,
     ),
     layout.Max(),
-    layout.Bsp(),
     layout.Floating(
         border_width=2,
         border_focus='#ff0077',
@@ -211,6 +210,8 @@ main_bar = bar.Bar(
         ),
 
         widget.CurrentLayoutIcon(scale=0.7),
+
+        widget.WindowCount(),
 
         widget.Chord(
             fmt='CHORD: {} ',

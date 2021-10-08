@@ -357,6 +357,15 @@
                       ":END:\n"
                       "Note: %?\n"))
 
+            ("q" "Question in mind" entry
+             (file+headline "tasks.org" "Figure this out")
+             ,(concat "* %^{Title}\n"
+                      ":PROPERTIES:\n"
+                      ":CREATED: %U\n"
+                      ":END:\n"
+                      "_Initial Thought_\n"
+                      "%?"))
+
             ("r" "Reading list item" entry
              (file+headline "tasks.org" "Reading List")
              ,(concat "* READ %^{Description}\n"

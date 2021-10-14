@@ -35,16 +35,32 @@
 (set-frame-parameter (selected-frame) 'alpha '(100 . 100))
 (add-to-list 'default-frame-alist `(alpha . (100 . 100)))
 
+;; Fonts
+(defvar pr/fixed-pitch-font "JetBrains Mono"
+  "Default fixed pitch font face")
+
+(defvar pr/variable-pitch-font "FiraGO"
+  "Default variable pitch font face")
+
+(defvar pr/org-heading-font "Cascadia Code PL"
+  "Font face for org headings")
+
 (defun pr/set-font-faces ()
   "Sets font faces."
   (set-face-attribute 'default nil
-                      :font "JetBrains Mono-10")
+                      :font pr/fixed-pitch-font
+                      :height 100
+                      :weight 'normal)
 
   (set-face-attribute 'fixed-pitch nil
-                      :font "JetBrains Mono-10")
+                      :font pr/fixed-pitch-font
+                      :height 100
+                      :weight 'normal)
 
   (set-face-attribute 'variable-pitch  nil
-                      :font "Noto Sans-12"))
+                      :font pr/variable-pitch-font
+                      :height 105
+                      :weight 'normal))
 
 (pr/set-font-faces)
 
@@ -177,7 +193,10 @@
                   org-level-3 org-level-4
                   org-level-5 org-level-6
                   org-level-7 org-level-8))
-    (set-face-attribute face nil :font "Fira Code-11" :weight 'semi-bold))
+    (set-face-attribute face nil
+                        :font pr/org-heading-font
+                        :height 120
+                        :weight 'semi-bold))
 
   ;; fixed-pitch setup
   (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)

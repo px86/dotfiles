@@ -323,6 +323,13 @@
 
 (setq org-clock-sound "~/.local/data/bell.wav")
 
+(add-hook 'prog-mode-hook
+          (lambda ()
+            (hl-line-mode)
+            (display-line-numbers-mode t)
+            (prettify-symbols-mode)
+            (electric-pair-local-mode)))
+
 (use-package projectile
   :diminish projectile-mode
   :config (projectile-mode)
@@ -343,7 +350,7 @@
   (lsp lsp-deferred)
   :hook
   (web-mode . lsp)
-  (js2-mode . lsp)
+  (js-mode . lsp)
   (c++-mode . lsp)
   (python-mode . lsp)
   (lsp-mode . (lambda ()
@@ -355,7 +362,6 @@
   (setq lsp-keymap-prefix "C-c l")
   :config
   (lsp-enable-which-key-integration t))
-
 
 (use-package lsp-ui)
 
@@ -399,15 +405,8 @@
                                          (">=" . ?≥))))
 (pr-prettify-setup)
 
-(add-hook 'prog-mode-hook
-          (lambda ()
-            (hl-line-mode)
-            (display-line-numbers-mode t)
-            (prettify-symbols-mode)
-            (electric-pair-local-mode)))
-
 (use-package web-mode
-  :mode (("\\.html$" . web-mode)
+  :mode (("\\.html?$" . web-mode)
          ("\\.djhtml$" . web-mode)
          ("\\.tsx$" . web-mode)
          ("\\.mustache\\'" . web-mode)
@@ -421,13 +420,14 @@
   (setq web-mode-css-indent-offset 2)
   (setq web-mode-code-indent-offset 2)
   (setq web-mode-enable-html-entities-fontification t)
+  (setq web-mode-enable-current-column-highlight t)
   (setq web-mode-auto-close-style 2))
 
 (use-package emmet-mode
-  :config
-  (add-hook 'web-mode-hook 'emmet-mode)
-  (add-hook 'sgml-mode-hook 'emmet-mode)
-  (add-hook 'css-mode-hook  'emmet-mode))
+  :hook
+  (web-mode  . emmet-mode)
+  (css-mode  . emmet-mode)
+  (sgml-mode . emmet-mode))
 
 (use-package pyvenv
   :demand t
@@ -440,15 +440,6 @@
   :init
   (setq pipenv-projectile-after-switch-function
         #'pipenv-projectile-after-switch-default))
-
-(use-package js2-mode
-  :mode "\\.jsx?\\'"
-  :config
-  (add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
-  (setq js2-mode-show-strict-warnings nil))
-
-(use-package vterm
-  :ensure nil)
 
 (use-package dired
     :ensure nil
@@ -501,6 +492,22 @@
 (add-hook 'server-after-make-frame-hook
                        #'pr/set-font-faces)
 
+(global-unset-key (kbd "C-x C-b"))
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
+(use-package elfeed)
+
+(setq elfeed-feeds
+      '(("https://www.reddit.com/r/emacs.rss" reddit emacs)
+        ("https://www.reddit.com/r/python.rss" reddit python)
+        ("https://www.reddit.com/r/cpp.rss" reddit C++)
+        ("https://www.reddit.com/r/git.rss" reddit git)
+        ("https://www.reddit.com/r/javascript.rss" reddit javascript)
+        ("https://javax0.wordpress.com/feed/" PeterVerhas Java)
+        ("https://planet.gnu.org/rss20.xml" GNU)
+        ("https://sachachua.com/blog/category/emacs/feed/" SachaChua emacs)
+        ("https://herbsutter.com/gotw/feed" HerbSutter C++)))
+
 (defun pr/edit-emacs-config ()
   "Edit the Emacs configuration file."
   (interactive)
@@ -508,18 +515,6 @@
 
 (global-set-key (kbd "C-c e") 'pr/edit-emacs-config)
 (global-set-key (kbd "C-c t") 'tab-bar-new-tab)
-
-(defun pr/toggle-vterm ()
-  "Toggle vterm window."
-  (interactive)
-  (if (get-buffer-window "*vterm*" t)
-      (delete-window (get-buffer-window "*vterm*" t))
-    (vterm)))
-
-(global-set-key (kbd "s-<tab>") 'pr/toggle-vterm)
-
-(global-unset-key (kbd "C-x C-b"))
-(global-set-key (kbd "C-x C-b") 'ibuffer)
 
 ;; Lower the GC threshold, again
 (setq gc-cons-threshold 16000000)

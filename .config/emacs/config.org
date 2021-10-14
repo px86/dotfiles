@@ -453,7 +453,18 @@
 #+end_src
 
 * Development Setup
-** projectile
+** Basic Setup
+
+#+begin_src emacs-lisp
+  (add-hook 'prog-mode-hook
+            (lambda ()
+              (hl-line-mode)
+              (display-line-numbers-mode t)
+              (prettify-symbols-mode)
+              (electric-pair-local-mode)))
+#+end_src
+
+** Projectile
 
 #+begin_src emacs-lisp
   (use-package projectile
@@ -466,7 +477,7 @@
     (setq projectile-switch-project-action #'projectile-dired))
 #+end_src
 
-** magit
+** Magit
 
 #+begin_src emacs-lisp
   (use-package magit
@@ -484,7 +495,7 @@
     (lsp lsp-deferred)
     :hook
     (web-mode . lsp)
-    (js2-mode . lsp)
+    (js-mode . lsp)
     (c++-mode . lsp)
     (python-mode . lsp)
     (lsp-mode . (lambda ()
@@ -497,11 +508,10 @@
     :config
     (lsp-enable-which-key-integration t))
 
-
   (use-package lsp-ui)
 #+end_src
 
-** company
+** Company
 
 #+begin_src emacs-lisp
   (use-package company
@@ -520,7 +530,7 @@
     :hook (company-mode . company-box-mode))
 #+end_src
 
-** flycheck
+** Flycheck
 
 #+begin_src emacs-lisp
   (use-package flycheck
@@ -528,7 +538,7 @@
     :hook (lsp-mode . flycheck-mode))
 #+end_src
 
-** yasnippet
+** Yasnippet
 
 #+begin_src emacs-lisp
   (use-package yasnippet
@@ -539,14 +549,14 @@
     (yas-reload-all))
 #+end_src
 
-** Comment/Uncomment
+** Commenter
 
 #+begin_src emacs-lisp
   (use-package evil-nerd-commenter
     :bind ("M-/" . evilnc-comment-or-uncomment-lines))
 #+end_src
 
-** Prettify-symbols setup
+** Prettify Symbols
 
 #+begin_src emacs-lisp
   (defun pr-prettify-setup ()
@@ -561,24 +571,13 @@
   (pr-prettify-setup)
 #+end_src
 
-** Line numbering, auto pairing etc.
-
-#+begin_src emacs-lisp
-  (add-hook 'prog-mode-hook
-            (lambda ()
-              (hl-line-mode)
-              (display-line-numbers-mode t)
-              (prettify-symbols-mode)
-              (electric-pair-local-mode)))
-#+end_src
-
-** web-mode
+** Web Mode
 
 Read more at [[https://web-mode.org/][web-mode]]
 
 #+begin_src emacs-lisp
   (use-package web-mode
-    :mode (("\\.html$" . web-mode)
+    :mode (("\\.html?$" . web-mode)
            ("\\.djhtml$" . web-mode)
            ("\\.tsx$" . web-mode)
            ("\\.mustache\\'" . web-mode)
@@ -592,24 +591,23 @@ Read more at [[https://web-mode.org/][web-mode]]
     (setq web-mode-css-indent-offset 2)
     (setq web-mode-code-indent-offset 2)
     (setq web-mode-enable-html-entities-fontification t)
+    (setq web-mode-enable-current-column-highlight t)
     (setq web-mode-auto-close-style 2))
 #+end_src
 
-** emmet-mode
+** Emmet Mode
+
+[[https://github.com/smihica/emmet-mode][Read More]]
 
 #+begin_src emacs-lisp
   (use-package emmet-mode
-    :config
-    (add-hook 'web-mode-hook 'emmet-mode)
-    (add-hook 'sgml-mode-hook 'emmet-mode)
-    (add-hook 'css-mode-hook  'emmet-mode))
+    :hook
+    (web-mode  . emmet-mode)
+    (css-mode  . emmet-mode)
+    (sgml-mode . emmet-mode))
 #+end_src
 
-** Python
-
-#+begin_src shell
-  pip install 'python-lsp-server[all]'
-#+end_src
+** Python Venvs
 
 #+begin_src emacs-lisp
   (use-package pyvenv
@@ -625,32 +623,7 @@ Read more at [[https://web-mode.org/][web-mode]]
           #'pipenv-projectile-after-switch-default))
 #+end_src
 
-** Javascript
-
-#+begin_src emacs-lisp
-  (use-package js2-mode
-    :mode "\\.jsx?\\'"
-    :config
-    (add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
-    (setq js2-mode-show-strict-warnings nil))
-#+end_src
-
-** vterm
-
-Install dependencies.
-
-#+begin_src shell
-  sudo apt install cmake libtool libtool-bin
-#+end_src
-
-manually install =vterm= with =M-x package-install RET vterm RET=
-
-#+begin_src emacs-lisp
-  (use-package vterm
-    :ensure nil)
-#+end_src
-
-* Dired - The Directory Editor
+* Dired
 
 #+begin_src emacs-lisp
   (use-package dired
@@ -671,7 +644,7 @@ manually install =vterm= with =M-x package-install RET vterm RET=
       :hook (dired-mode . all-the-icons-dired-mode))
 #+end_src
 
-* Tab-Bar Mode
+* Tab Bar Mode
 
 #+begin_src emacs-lisp
   (use-package tab-bar
@@ -694,7 +667,7 @@ manually install =vterm= with =M-x package-install RET vterm RET=
   (winner-mode)
 #+end_src
 
-** side window & display-buffer-alist
+** side windows
 
 #+begin_src emacs-lisp
   (setq display-buffer-alist
@@ -722,6 +695,30 @@ manually install =vterm= with =M-x package-install RET vterm RET=
                          #'pr/set-font-faces)
 #+end_src
 
+* Ibuffer
+
+#+begin_src emacs-lisp
+  (global-unset-key (kbd "C-x C-b"))
+  (global-set-key (kbd "C-x C-b") 'ibuffer)
+#+end_src
+
+* Elfeed
+
+#+begin_src emacs-lisp
+  (use-package elfeed)
+
+  (setq elfeed-feeds
+        '(("https://www.reddit.com/r/emacs.rss" reddit emacs)
+          ("https://www.reddit.com/r/python.rss" reddit python)
+          ("https://www.reddit.com/r/cpp.rss" reddit C++)
+          ("https://www.reddit.com/r/git.rss" reddit git)
+          ("https://www.reddit.com/r/javascript.rss" reddit javascript)
+          ("https://javax0.wordpress.com/feed/" PeterVerhas Java)
+          ("https://planet.gnu.org/rss20.xml" GNU)
+          ("https://sachachua.com/blog/category/emacs/feed/" SachaChua emacs)
+          ("https://herbsutter.com/gotw/feed" HerbSutter C++)))
+#+end_src
+
 * Some Shortcuts
 
 #+begin_src emacs-lisp
@@ -732,22 +729,6 @@ manually install =vterm= with =M-x package-install RET vterm RET=
 
   (global-set-key (kbd "C-c e") 'pr/edit-emacs-config)
   (global-set-key (kbd "C-c t") 'tab-bar-new-tab)
-
-  (defun pr/toggle-vterm ()
-    "Toggle vterm window."
-    (interactive)
-    (if (get-buffer-window "*vterm*" t)
-        (delete-window (get-buffer-window "*vterm*" t))
-      (vterm)))
-
-  (global-set-key (kbd "s-<tab>") 'pr/toggle-vterm)
-#+end_src
-
-* Ibuffer
-
-#+begin_src emacs-lisp
-  (global-unset-key (kbd "C-x C-b"))
-  (global-set-key (kbd "C-x C-b") 'ibuffer)
 #+end_src
 
 * Runtime Performance

@@ -13,25 +13,27 @@
 # ---------------------------------------------------------------------------
 
 from libqtile import bar, layout, widget
-from libqtile.config import Click, Drag, Screen, Key, KeyChord
-from libqtile.config import Group, Match, DropDown, ScratchPad
 from libqtile.lazy import lazy
+from libqtile.config import (Click, Drag, Screen, Key, KeyChord,
+                             Group, Match, DropDown, ScratchPad)
 
 # ---------------------------------------------------------------------------
-# SOME CUSTOM VARIABLES
+# SOME VARIABLES
 # ---------------------------------------------------------------------------
 
 MOD = "mod4"
 TERMINAL = "xterm"
 
-# colors
-BAR_BG = '#000000'
-BG1 = '#282A36'
-BG2 = '#3b4252'
-FG1 = '#ebcb8b'
-FG2 = '#d995cd'
-FG3 = '#5af78e'
-FG4 = '#a9def9'
+# fonts
+SANS = 'Source Sans Pro Bold'
+MONO = 'Caskaydia Cove Nerd Font'
+
+# dark colors
+CD1 = '#282A36'
+
+# light colors
+CL1 = '#a9def9'
+CL2 = '#5af78e'
 
 # ---------------------------------------------------------------------------
 # GROUPS (workspaces)
@@ -113,8 +115,6 @@ keys = [
     Key([MOD], "p", lazy.spawncmd()),
     Key([MOD], "Return", lazy.spawn(TERMINAL)),
 
-    # keybindings are in accordance with 'columns' layout
-
     # SHIFT MODE #
     # move windows around with vim keys
     KeyChord([MOD], "w", [
@@ -144,14 +144,15 @@ keys = [
 ]
 
 # switching groups, moving windows to other groups
-for i in "12345678":
-    keys.extend([
-        Key([MOD], i,
-            lazy.group[i].toscreen()),
-
-        Key([MOD, "shift"], i,
-            lazy.window.togroup(i, switch_group=False)),
-    ])
+for group in groups:
+    i = group.name
+    if len(i)==1:
+        keys.extend([
+            Key([MOD], i, lazy.group[i].toscreen()),
+            
+            Key([MOD, "shift"], i,
+                lazy.window.togroup(i, switch_group=False)),
+        ])
 
 # -----------------------------------------------------------------------
 # LAYOUTS
@@ -163,7 +164,7 @@ layouts = [
         num_columns=2,
         border_width=2,
         border_focus='#ff3377',
-        border_normal=BG1,
+        border_normal=CD1,
         border_on_single=False,
         margin=0,
         margin_on_single=0,
@@ -181,7 +182,7 @@ layouts = [
 
 # widget defaults #
 widget_defaults = dict(
-    font='CaskaydiaCove Nerd Font Bold',
+    font=MONO,
     fontsize=14,
     padding=4,
 )
@@ -190,15 +191,26 @@ extension_defaults = widget_defaults.copy()
 
 # --------------------------------------------------------------------------
 
+def decoration(fg, bg):
+    '''TextBox widget for arrow style decoration.'''
+    return widget.TextBox(
+            text='',
+            fontsize=18,
+            padding=-0.1,
+            foreground=fg,
+            background=bg,
+        )
+
+
 main_bar = bar.Bar(
     size=20,
     opacity=1.0,
-    background=BG1,
+    background=CD1,
 
     # WIDGETS #
     widgets=[
         widget.GroupBox(
-            font='CaskaydiaCove Nerd Font',
+            font=MONO,
             fontsize=18,
             padding=1,
             disable_drag=True,
@@ -209,63 +221,70 @@ main_bar = bar.Bar(
             urgent_alert_method='text',
         ),
 
-        widget.CurrentLayoutIcon(scale=0.7),
+        widget.CurrentLayoutIcon(scale=0.75),
 
         widget.WindowCount(),
 
         widget.Chord(
             fmt='CHORD: {} ',
-            foreground=FG3,
+            font=f'{MONO} Bold',
+            foreground=CL2,
         ),
 
         widget.Prompt(
             ignore_dups_history=True,
-            fontsize=14,
+            font=f'{MONO} Bold',
             prompt='>_ ',
-            foreground=FG2,
+            foreground=CL1,
         ),
 
         widget.Spacer(),
-
-        widget.Clock(
-            format='%a %I:%M %p',
-            foreground=FG4,
-            fontsize=13,
-        ),
-
-        widget.Spacer(),
-
-        widget.Systray(),
 
         widget.Wlan(
             interface='wlp2s0',
-            format='{essid}',
-            disconnected_message='none',
+            format='直 {essid}:{quality}/70',
+            disconnected_message='睊 none',
+            font=f'{MONO} Bold',
             update_interval=10,
-            fmt='NET:{}',
-            foreground=FG4,
+            foreground=CL1,
         ),
 
-        widget.Sep(),
+        decoration(bg=CD1, fg=CL1),
 
         widget.Memory(
-            format='{MemUsed:.0f}M',
             measure_mem='M',
+            format='{MemUsed:.0f}mb',
+            fmt=' {}',
             update_interval=10.0,
-            fmt='MEM:{}',
-            foreground=FG1,
+            foreground=CD1,
+            background=CL1,
         ),
-
-        widget.Sep(),
 
         widget.Battery(
             battery='BAT0',
-            charge_char='',
-            discharge_char='',
-            format='{char} {percent:2.0%}',
+            charge_char='+',
+            discharge_char='',
+            format='{percent:2.0%} {char}',
+            fmt=' {}',
             update_interval=60,
-            fmt='BAT:{}',
-            foreground=FG2,
+            foreground=CD1,
+            background=CL1,
+        ),
+
+        decoration(fg=CD1, bg=CL1),
+
+        widget.Clock(
+            format='%A %d %b %H:%M',
+            font=SANS,
+            foreground=CL1,
+        ),
+
+        widget.Systray(),
+
+        widget.QuickExit(
+            default_text='⏻',
+            countdown_format='{}',
+            foreground=CL1,
         ),
     ],
 )

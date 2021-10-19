@@ -30,6 +30,8 @@ MONO = 'Caskaydia Cove Nerd Font'
 
 # dark colors
 CD1 = '#282A36'
+CD2 = '#2e3440'
+CD3 = '#3b4252'
 
 # light colors
 CL1 = '#a9def9'
@@ -240,6 +242,8 @@ main_bar = bar.Bar(
 
         widget.Spacer(),
 
+        decoration(fg=CD3, bg=CD1),
+
         widget.Wlan(
             interface='wlp2s0',
             format='直 {essid}:{quality}/70',
@@ -247,9 +251,10 @@ main_bar = bar.Bar(
             font=f'{MONO} Bold',
             update_interval=10,
             foreground=CL1,
+            background=CD3,
         ),
 
-        decoration(bg=CD1, fg=CL1),
+        decoration(bg=CD3, fg=CL1),
 
         widget.Memory(
             measure_mem='M',
@@ -284,7 +289,8 @@ main_bar = bar.Bar(
         widget.QuickExit(
             default_text='⏻',
             countdown_format='{}',
-            foreground=CL1,
+            padding=6,
+            foreground='#bf616a', 
         ),
     ],
 )

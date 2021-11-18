@@ -17,6 +17,9 @@
 (prefer-coding-system 'utf-8)
 (set-default-coding-systems 'utf-8)
 
+;; Show me what I type, immediately
+(setq echo-keystrokes 0.01)
+
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (tooltip-mode -1)
@@ -27,8 +30,7 @@
 (setq inhibit-startup-screen t
       scroll-conservatively 101)
 
-;; scratch buffer starts in org-mode
-;; (setq initial-major-mode 'org-mode)
+(setq initial-major-mode 'fundamental-mode)
 (setq initial-scratch-message "")
 
 ;; Set frame transparency
@@ -36,26 +38,22 @@
 (add-to-list 'default-frame-alist `(alpha . (100 . 100)))
 
 ;; Fonts
-(defvar pr/fixed-pitch-font "JetBrains Mono"
-  "Default fixed pitch font face")
+(setq pr/fixed-pitch-font "JetBrains Mono NL")
 
-(defvar pr/variable-pitch-font "FiraGO"
-  "Default variable pitch font face")
+(setq pr/variable-pitch-font "FiraGO")
 
-(defvar pr/org-heading-font "Cascadia Code PL"
-  "Font face for org headings")
+(setq pr/org-heading-font "Fira Code-12")
 
 (defun pr/set-font-faces ()
   "Sets font faces."
   (set-face-attribute 'default nil
                       :font pr/fixed-pitch-font
-                      :height 100
+                      :height 102
                       :weight 'normal)
 
   (set-face-attribute 'fixed-pitch nil
                       :font pr/fixed-pitch-font
-                      :height 100
-                      :weight 'normal)
+                      :height 1.0)
 
   (set-face-attribute 'variable-pitch  nil
                       :font pr/variable-pitch-font
@@ -89,18 +87,11 @@
 ;; prevent Emacs form littering into init.el
 (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
 
-(use-package which-key
-  :defer 0
-  :diminish which-key-mode
-  :config
-  (which-key-mode)
-  (setq which-key-idle-delay 2))
-
 ;;; required for doom-modline
 (use-package all-the-icons)
 
 (use-package doom-themes
-  :config (load-theme 'doom-dracula t))
+  :config (load-theme 'doom-nord t))
 
 (use-package doom-modeline
   :init
@@ -119,6 +110,7 @@
   (dashboard-set-heading-icons t)
   (dashboard-set-file-icons t)
   (dashboard-set-init-info t)
+  (dashboard-projects-backend 'project-el)
   (dashboard-items '((recents  . 5)
                      (projects . 5)
                      (agenda . 5)
@@ -130,10 +122,6 @@
   (savehist-mode 1))
 
 (use-package vertico
-  :bind (:map vertico-map
-         ("C-j" . vertico-next)
-         ("C-k" . vertico-previous)
-         ("C-f" . vertico-exit))
   :custom
   (vertico-cycle t)
   :custom-face
@@ -148,16 +136,6 @@
         completion-category-overrides
         '((file (styles . (partial-completion))))))
 
-(use-package consult
-  :demand t
-  :bind (("C-s" . consult-line)
-         ("C-M-l" . consult-imenu)
-         ("C-M-j" . persp-switch-to-buffer*)
-         :map minibuffer-local-map
-         ("C-r" . consult-history))
-  :custom
-  (completion-in-region-function #'consult-completion-in-region))
-
 (use-package marginalia
   :after vertico
   :custom
@@ -165,26 +143,6 @@
                            marginalia-annotators-light nil))
   :init
   (marginalia-mode))
-
-(use-package evil
-  :init
-  (setq evil-want-integration t
-        evil-want-keybinding nil
-        evil-want-C-u-scroll t
-        evil-want-C-i-jump nil)
-  :config
-  (evil-mode 1)
-  (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
-  (evil-global-set-key 'motion "j" 'evil-next-visual-line)
-  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
-
-  (evil-set-initial-state 'messages-buffer-mode 'normal)
-  (evil-set-initial-state 'dashboard-mode 'normal))
-
-(use-package evil-collection
-  :after evil
-  :config
-  (evil-collection-init))
 
 (defun pr/org-font-setup ()
   "Set necessary font faces in `org-mode'."
@@ -195,8 +153,7 @@
                   org-level-7 org-level-8))
     (set-face-attribute face nil
                         :font pr/org-heading-font
-                        :height 120
-                        :weight 'semi-bold))
+                        :weight 'bold))
 
   ;; fixed-pitch setup
   (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
@@ -327,43 +284,21 @@
           (lambda ()
             (hl-line-mode)
             (display-line-numbers-mode t)
-            (prettify-symbols-mode)
             (electric-pair-local-mode)))
 
-(use-package projectile
-  :diminish projectile-mode
-  :config (projectile-mode)
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
-  :init
-  (setq projectile-project-search-path '("~/code"))
-  (setq projectile-switch-project-action #'projectile-dired))
-
-(use-package magit
-  :commands magit-status
-  :custom
-  (magit-display-buffer-function
-   #'magit-display-buffer-same-window-except-diff-v1))
+(use-package project
+  :defer 0)
 
 (use-package lsp-mode
-  :commands
-  (lsp lsp-deferred)
+  :commands  (lsp lsp-deferred)
   :hook
-  (web-mode . lsp)
-  (js-mode . lsp)
+  (c-mode . lsp)
   (c++-mode . lsp)
-  (python-mode . lsp)
-  (lsp-mode . (lambda ()
-                (setq
-                 lsp-headerline-breadcrumb-segments '(project file symbols)
-                 lsp-headerline-breadcrumb-enable-diagnostics nil)
-                (lsp-headerline-breadcrumb-mode)))
+  (web-mode . lsp)
+  (js2-mode . lsp)
   :init
-  (setq lsp-keymap-prefix "C-c l")
-  :config
-  (lsp-enable-which-key-integration t))
-
-(use-package lsp-ui)
+  (setq lsp-headerline-breadcrumb-enable 'nil)
+  (setq lsp-keymap-prefix "C-c l"))
 
 (use-package company
   :after lsp-mode
@@ -374,14 +309,10 @@
   (:map lsp-mode-map
         ("<tab>" . company-indent-or-complete-common))
   :custom
-  (company-minimum-prefix-length 1)
+  (company-minimum-prefix-length 2)
   (company-idle-delay 0.0))
 
-(use-package company-box
-  :hook (company-mode . company-box-mode))
-
 (use-package flycheck
-  :defer t
   :hook (lsp-mode . flycheck-mode))
 
 (use-package yasnippet
@@ -393,17 +324,6 @@
 
 (use-package evil-nerd-commenter
   :bind ("M-/" . evilnc-comment-or-uncomment-lines))
-
-(defun pr-prettify-setup ()
-  "Set default prettify symbols."
-  (setq-default prettify-symbols-alist '(("lambda" . ?λ)
-                                         ("->" . ?→)
-                                         ("=>" . ?⇒)
-                                         ("!=" . ?≠)
-                                         ("==" . ?≡)
-                                         ("<=" . ?≤)
-                                         (">=" . ?≥))))
-(pr-prettify-setup)
 
 (use-package web-mode
   :mode (("\\.html?$" . web-mode)
@@ -430,30 +350,20 @@
   (sgml-mode . emmet-mode))
 
 (use-package pyvenv
-  :demand t
-  :config
-  (pyvenv-activate (expand-file-name "~/.local/share/virtualenvs/emacs")))
+  :hook (python-mode . pyvenv-mode))
 
-(use-package pipenv
-  :defer 0
-  :hook (python-mode . pipenv-mode)
-  :init
-  (setq pipenv-projectile-after-switch-function
-        #'pipenv-projectile-after-switch-default))
+(use-package js2-mode
+  :mode "\\.js\\'")
+
+(setq explicit-shell-file-name "/bin/bash")
 
 (use-package dired
     :ensure nil
     :commands (dired dired-jump)
     :bind (("C-x C-j" . dired-jump))
     :custom ((dired-listing-switches "-lhAX --group-directories-first"))
-    :hook (dired-mode . (lambda () (dired-hide-details-mode)))
-    :config
-    (evil-collection-define-key 'normal 'dired-mode-map
-      "h" 'dired-single-up-directory
-      "l" 'dired-single-buffer))
-
-  (use-package dired-single
-    :commands (dired dired-jump))
+    :hook (dired-mode . (lambda () 
+                          (dired-hide-details-mode))))
 
   (use-package all-the-icons-dired
     :hook (dired-mode . all-the-icons-dired-mode))
@@ -481,6 +391,8 @@
                   "\\|Flycheck"
                   "\\|Flymake"
                   "\\|vterm"
+                  "\\|ansi-term"
+                  "\\|term"
                   "\\).*\\*")
          (display-buffer-in-side-window)
          (window-height . 0.33)
@@ -495,18 +407,22 @@
 (global-unset-key (kbd "C-x C-b"))
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
-(use-package elfeed)
-
-(setq elfeed-feeds
-      '(("https://www.reddit.com/r/emacs.rss" reddit emacs)
-        ("https://www.reddit.com/r/python.rss" reddit python)
-        ("https://www.reddit.com/r/cpp.rss" reddit C++)
-        ("https://www.reddit.com/r/git.rss" reddit git)
-        ("https://www.reddit.com/r/javascript.rss" reddit javascript)
-        ("https://javax0.wordpress.com/feed/" PeterVerhas Java)
-        ("https://planet.gnu.org/rss20.xml" GNU)
-        ("https://sachachua.com/blog/category/emacs/feed/" SachaChua emacs)
-        ("https://herbsutter.com/gotw/feed" HerbSutter C++)))
+(use-package elfeed
+  :hook
+  (elfeed-show-mode . (lambda ()
+                        (visual-line-mode)
+                        (visual-fill-column-mode)))
+  :custom
+  (elfeed-feeds
+   '(("https://www.reddit.com/r/emacs.rss" reddit emacs)
+     ("https://www.reddit.com/r/python.rss" reddit python)
+     ("https://www.reddit.com/r/cpp.rss" reddit C++)
+     ("https://www.reddit.com/r/git.rss" reddit git)
+     ("https://www.reddit.com/r/javascript.rss" reddit javascript)
+     ("https://javax0.wordpress.com/feed/" PeterVerhas Java)
+     ("https://planet.gnu.org/rss20.xml" GNU)
+     ("https://sachachua.com/blog/category/emacs/feed/" SachaChua emacs)
+     ("https://herbsutter.com/gotw/feed" HerbSutter C++))))
 
 (defun pr/edit-emacs-config ()
   "Edit the Emacs configuration file."

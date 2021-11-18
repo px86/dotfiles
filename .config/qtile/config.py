@@ -29,9 +29,10 @@ SANS = 'Source Sans Pro Bold'
 MONO = 'Caskaydia Cove Nerd Font'
 
 # dark colors
-CD1 = '#282A36'
-CD2 = '#2e3440'
-CD3 = '#3b4252'
+#CD1 = '#282A36'  # dracula darkest
+CD1 = '#2e3440'   # nord darkest
+#CD2 = '#3b4252'
+CD2 = '#4c566a'
 
 # light colors
 CL1 = '#a9def9'
@@ -242,7 +243,7 @@ main_bar = bar.Bar(
 
         widget.Spacer(),
 
-        decoration(fg=CD3, bg=CD1),
+        decoration(fg=CD2, bg=CD1),
 
         widget.Wlan(
             interface='wlp2s0',
@@ -251,10 +252,10 @@ main_bar = bar.Bar(
             font=f'{MONO} Bold',
             update_interval=10,
             foreground=CL1,
-            background=CD3,
+            background=CD2,
         ),
 
-        decoration(bg=CD3, fg=CL1),
+        decoration(bg=CD2, fg=CL1),
 
         widget.Memory(
             measure_mem='M',

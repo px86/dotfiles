@@ -38,7 +38,8 @@ set cursorline
 set laststatus=1
 
 set background=dark
-colorscheme dracula
+"colorscheme dracula
+colorscheme nord
 
 "set noshowmode
 

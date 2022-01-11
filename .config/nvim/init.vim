@@ -1,16 +1,16 @@
 " px86's neovim config
-"                                            |  \             
-"        _______   ______   ______  __     __ \▓▓______ ____  
-"       |       \ /      \ /      \|  \   /  \  \      \    \ 
+"                                            |  \
+"        _______   ______   ______  __     __ \▓▓______ ____
+"       |       \ /      \ /      \|  \   /  \  \      \    \
 "       | ▓▓▓▓▓▓▓\  ▓▓▓▓▓▓\  ▓▓▓▓▓▓\\▓▓\ /  ▓▓ ▓▓ ▓▓▓▓▓▓\▓▓▓▓\
 "       | ▓▓  | ▓▓ ▓▓    ▓▓ ▓▓  | ▓▓ \▓▓\  ▓▓| ▓▓ ▓▓ | ▓▓ | ▓▓
 "       | ▓▓  | ▓▓ ▓▓▓▓▓▓▓▓ ▓▓__/ ▓▓  \▓▓ ▓▓ | ▓▓ ▓▓ | ▓▓ | ▓▓
 "       | ▓▓  | ▓▓\▓▓     \\▓▓    ▓▓   \▓▓▓  | ▓▓ ▓▓ | ▓▓ | ▓▓
 "        \▓▓   \▓▓ \▓▓▓▓▓▓▓ \▓▓▓▓▓▓     \▓    \▓▓\▓▓  \▓▓  \▓▓
-"                                                             
+"
 "
 " --------------------------------------------------------------------
-                                                      
+
 
 filetype plugin indent on
 syntax on
@@ -35,13 +35,16 @@ set hidden
 
 set termguicolors
 set cursorline
-set laststatus=1
+set laststatus=2
 
 set background=dark
-"colorscheme dracula
-colorscheme nord
+colorscheme OceanicNext
 
-"set noshowmode
+set noshowmode
+
+let g:lightline = {
+      \ 'colorscheme': 'one',
+      \ }
 
 let mapleader = " "
 set path+=**
@@ -59,8 +62,8 @@ nnoremap <c-k> <c-w><c-k>
 nnoremap <c-l> <c-w><c-l>
 nnoremap <c-h> <c-w><c-h>
 
-" nnoremap ; :
-" nnoremap : ;
+nnoremap ; :
+nnoremap : ;
 
 nnoremap <leader>o o<esc>k
 nnoremap <leader>O O<esc>j
@@ -68,10 +71,9 @@ nnoremap <leader>O O<esc>j
 """ copy to clipboard(+ reg) in visualmode
 vnoremap <leader>y "+y
 
-tnoremap <silent> <Esc> <c-\><c-n> 
+tnoremap <silent> <Esc> <c-\><c-n>
 
 """ COMPILE
 autocmd filetype cpp nnoremap <F5> :w <bar> !g++ -ulimit -Wall -Wno-unused-result -std=c++17   -O2   % -o %:r <CR>
 autocmd filetype c nnoremap <F5> :w <bar> !gcc  % -o %:r <CR>
 autocmd filetype python nnoremap <F5> :w <bar> !python3 % <CR>
-

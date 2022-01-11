@@ -40,8 +40,8 @@ export PS1="\[\e[34m\]\w\[\e[m\]\[\e[32m\] $ \[\e[m\]"
 
 ### bash-alias ###
 alias ls="ls --color=auto --group-directories-first"
-alias ll="ls -ohX"
-alias la="ll -A"
+alias ll="exa -ls  extension  --group-directories-first"
+alias la="exa -als extension --group-directories-first"
 alias grep="grep --color=auto"
 alias q="exit"
 alias ec="emacsclient -ta 'emacs -nw'"

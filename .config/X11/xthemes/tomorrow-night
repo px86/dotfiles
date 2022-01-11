@@ -1,0 +1,20 @@
+
+! Tomorrow Night
+#define BACKGROUND #1d1f21
+#define FOREGROUND #c5c8c6
+#define COLOR0     #1d1f21
+#define COLOR1     #cc6666
+#define COLOR2     #b5bd68
+#define COLOR3     #e6c547
+#define COLOR4     #81a2be
+#define COLOR5     #b294bb
+#define COLOR6     #70c0ba
+#define COLOR7     #373b41
+#define COLOR8     #666666
+#define COLOR9     #ff3334
+#define COLOR10    #9ec400
+#define COLOR11    #f0c674
+#define COLOR12    #81a2be
+#define COLOR13    #b77ee0
+#define COLOR14    #54ced6
+#define COLOR15    #282a2e

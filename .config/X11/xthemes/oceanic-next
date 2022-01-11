@@ -1,0 +1,20 @@
+
+! Oceanic Next
+#define BACKGROUND #1b2b34
+#define FOREGROUND #d8dee9
+#define COLOR0     #343d46
+#define COLOR1     #EC5f67
+#define COLOR2     #99C794
+#define COLOR3     #FAC863
+#define COLOR4     #6699cc
+#define COLOR5     #c594c5
+#define COLOR6     #5fb3b3
+#define COLOR7     #d8dee9
+#define COLOR8     #343d46
+#define COLOR9     #EC5f67
+#define COLOR10    #99C794
+#define COLOR11    #FAC863
+#define COLOR12    #6699cc
+#define COLOR13    #c594c5
+#define COLOR14    #5fb3b3
+#define COLOR15    #d8dee9

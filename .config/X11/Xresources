@@ -7,47 +7,9 @@
 !                                                        !
 !--------------------------------------------------------!
 
-! Dracula Theme
-! #define FOREGROUND #F8F8F2
-! #define BACKGROUND #282A36
-! #define COLOR0     #000000
-! #define COLOR1     #FF5555
-! #define COLOR2     #50FA7B
-! #define COLOR3     #F1FA8C
-! #define COLOR4     #BD93F9
-! #define COLOR5     #FF79C6
-! #define COLOR6     #8BE9FD
-! #define COLOR7     #BFBFBF
-! #define COLOR8     #4D4D4D
-! #define COLOR9     #FF6E67
-! #define COLOR10    #5AF78E
-! #define COLOR11    #F4F99D
-! #define COLOR12    #CAA9FA
-! #define COLOR13    #FF92D0
-! #define COLOR14    #9AEDFE
-! #define COLOR15    #E6E6E6
+#include "xthemes/oceanic-next"
 
-! Nord theme
-#define FOREGROUND #D8DEE9
-#define BACKGROUND #2E3440
-#define COLOR0     #3B4252
-#define COLOR1     #BF616A
-#define COLOR2     #A3BE8C
-#define COLOR3     #EBCB8B
-#define COLOR4     #81A1C1
-#define COLOR5     #B48EAD
-#define COLOR6     #88C0D0
-#define COLOR7     #E5E9F0
-#define COLOR8     #4C566A
-#define COLOR9     #BF616A
-#define COLOR10    #A3BE8C
-#define COLOR11    #EBCB8B
-#define COLOR12    #81A1C1
-#define COLOR13    #B48EAD
-#define COLOR14    #8FBCBB
-#define COLOR15    #ECEFF4
-
-!----------------------------------------------------------- 
+!-----------------------------------------------------------
 
 *.foreground: FOREGROUND
 *.background: BACKGROUND
@@ -68,7 +30,6 @@
 *.color14:    COLOR14
 *.color15:    COLOR15
 
-
 !---------------------!
 ! XTERM CONFIGURATION !
 !---------------------!
@@ -88,8 +49,8 @@ xterm*internalBorder: 5
 XTerm*dynamicColors: on
 
 ! Font configuration
-XTerm*faceName:  CaskaydiaCove Nerd Font:style=SemiBold 
-XTerm*faceSize:  10.5
+XTerm*faceName:  CaskaydiaCove Nerd Font:style=regular
+XTerm*faceSize:  11.0
 xterm*faceSize1: 9.5
 xterm*faceSize2: 12
 xterm*faceSize3: 14

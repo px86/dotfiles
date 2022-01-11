@@ -1,0 +1,19 @@
+! Doom One
+#define BACKGROUND #282c34
+#define FOREGROUND #bbc2cf
+#define COLOR0     #1c1f24
+#define COLOR1     #ff6c6b
+#define COLOR2     #98be65
+#define COLOR3     #da8548
+#define COLOR4     #51afef
+#define COLOR5     #c678dd
+#define COLOR6     #5699af
+#define COLOR7     #202328
+#define COLOR8     #5b6268
+#define COLOR9     #da8548
+#define COLOR10    #4db5bd
+#define COLOR11    #ecbe7b
+#define COLOR12    #3071db   ! #2257a0 in Doom Emacs
+#define COLOR13    #a9a1e1
+#define COLOR14    #46d9ff
+#define COLOR15    #dfdfdf

@@ -1,15 +1,8 @@
 ;; Higher threshold for less frequent garbage collections during startup.
 (setq gc-cons-threshold (* 64 1000000)) ;;; 64MB
 
-(defun pr/display-startup-time ()
-  "Displays a message indicating the Emacs startup time and number of garbage collections."
-  (message "Emacs loaded in %s with %d garbage collections."
-           (format "%.2f seconds"
-                   (float-time
-                    (time-subtract after-init-time before-init-time)))
-           gcs-done))
-
-(add-hook 'emacs-startup-hook #'pr/display-startup-time)
+(setq native-comp-async-report-warnings-errors nil)
+(add-to-list 'native-comp-eln-load-path (expand-file-name "eln-cache/" user-emacs-directory))
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
@@ -38,29 +31,41 @@
 (add-to-list 'default-frame-alist `(alpha . (100 . 100)))
 
 ;; Fonts
-(setq pr/fixed-pitch-font "JetBrains Mono NL")
-
-(setq pr/variable-pitch-font "FiraGO")
-
-(setq pr/org-heading-font "Fira Code-12")
+(setq pr/fixed-pitch-font "Fantasque Sans Mono")
+(setq pr/variable-pitch-font "Open Sans")
 
 (defun pr/set-font-faces ()
   "Sets font faces."
   (set-face-attribute 'default nil
                       :font pr/fixed-pitch-font
-                      :height 102
-                      :weight 'normal)
+                      :weight 'normal
+                      :height 120)
 
   (set-face-attribute 'fixed-pitch nil
                       :font pr/fixed-pitch-font
+                      :weight 'normal
                       :height 1.0)
 
   (set-face-attribute 'variable-pitch  nil
                       :font pr/variable-pitch-font
-                      :height 105
-                      :weight 'normal))
+                      :height 1.0))
 
 (pr/set-font-faces)
+
+;; Repeated invocation of M-<space> will cycle through
+;; 1. single space, 2. no space, 3. original
+(substitute-key-definition 'just-one-space
+                           (lambda ()
+                             (interactive)
+                             (cycle-spacing -1 t))
+                           (current-global-map))
+
+(add-hook 'before-save-hook
+          'delete-trailing-whitespace)
+
+(set-register ?E '(file . "~/.config/emacs/config.org"))
+(set-register ?Q '(file . "~/.config/qtile/config.py"))
+(set-register ?B '(file . "~/.local/data/bookmarks"))
 
 (require 'package)
 
@@ -90,30 +95,50 @@
 ;;; required for doom-modline
 (use-package all-the-icons)
 
+(setq pr/light-theme 'doom-gruvbox-light)
+(setq pr/dark-theme 'doom-rouge)
+(setq pr/current-theme-variant "dark")
+
+(defun pr/toggle-theme ()
+  "Toggle between light and dark themes, set by variables `pr/light-theme'
+and `pr/dark-theme'"
+  (interactive)
+  (if (string= pr/current-theme-variant "dark")
+      (progn
+        (disable-theme pr/dark-theme)
+        (load-theme pr/light-theme t)
+        (setq pr/current-theme-variant "light"))
+    (disable-theme pr/light-theme)
+    (load-theme pr/dark-theme t)
+    (setq pr/current-theme-variant "dark"))
+  (message "%s theme activated" pr/current-theme-variant))
+
 (use-package doom-themes
-  :config (load-theme 'doom-nord t))
+  :config
+  (load-theme pr/dark-theme t)
+  (set-face-attribute 'font-lock-comment-face  nil
+                      :slant 'italic))
 
 (use-package doom-modeline
   :init
   (doom-modeline-mode 1)
   (setq doom-modeline-icon t)
   :custom
-  (doom-modeline-height 15))
+  (doom-modeline-height 12))
 
 (use-package dashboard
   :config
   (dashboard-setup-startup-hook)
   :custom
-  (dashboard-banner-logo-title "Welcome to GNU Emacs")
+  (dashboard-banner-logo-title "Do Something Great(ly)!")
   (dashboard-startup-banner 'logo)
   (dashboard-center-content t)
   (dashboard-set-heading-icons t)
   (dashboard-set-file-icons t)
   (dashboard-set-init-info t)
   (dashboard-projects-backend 'project-el)
-  (dashboard-items '((recents  . 5)
-                     (projects . 5)
-                     (agenda . 5)
+  (dashboard-items '((recents  . 4)
+                     (projects . 3)
                      (registers . 5))))
 
 (use-package savehist
@@ -124,8 +149,8 @@
 (use-package vertico
   :custom
   (vertico-cycle t)
-  :custom-face
-  (vertico-current ((t (:background "#3a3f5a"))))
+  ;; :custom-face
+  ;; (vertico-current ((t (:background "#3a3f5a"))))
   :init
   (vertico-mode))
 
@@ -147,36 +172,37 @@
 (defun pr/org-font-setup ()
   "Set necessary font faces in `org-mode'."
 
-  (dolist (face '(org-level-1 org-level-2
-                  org-level-3 org-level-4
-                  org-level-5 org-level-6
-                  org-level-7 org-level-8))
-    (set-face-attribute face nil
-                        :font pr/org-heading-font
+  (dolist (face '((org-level-1 . 1.25)
+                  (org-level-2 . 1.15)
+                  (org-level-3 . 1.05)
+                  (org-level-4 . 1.0)
+                  (org-level-5 . 1.0)
+                  (org-level-6 . 1.0)
+                  (org-level-7 . 1.0)
+                  (org-level-8 . 1.0)))
+    (set-face-attribute (car face) nil
+                        :height (cdr face)
                         :weight 'bold))
 
   ;; fixed-pitch setup
-  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-
-  (dolist (face '(org-table org-formula
+  (dolist (face '(org-table
+                  org-formula org-block
+                  org-code org-verbatim
                   org-checkbox line-number
+                  org-special-keyword
                   line-number-current-line))
     (set-face-attribute face nil :inherit 'fixed-pitch))
 
-  (dolist (face '(org-code org-table
-                  org-verbatim))
-    (set-face-attribute face nil :inherit '(shadow fixed-pitch)))
-
-  (dolist (face '(org-special-keyword
+  (dolist (face '(org-table
+                  org-document-info-keyword
                   org-meta-line))
     (set-face-attribute face nil
-                        :inherit '(font-lock-comment-face fixed-pitch))))
+                        :foreground nil
+                        :inherit '(shadow fixed-pitch))))
 
 (use-package org
   :pin org
-  :commands (org-capture org-agenda)
-  :bind
-  ("C-c a" . org-agenda)
+  :defer t
   :hook
   (org-mode . (lambda ()
                 (pr/org-font-setup)
@@ -184,25 +210,11 @@
                 (visual-line-mode 1)))
   :custom
   (org-ellipsis " ▾")
-  (org-directory "~/org")
+  (org-directory "~/Org")
+  (org-hide-emphasis-markers t)
+  (org-clock-sound "~/.local/data/bell.wav")
   :config
-  (add-to-list 'org-modules 'org-habit)
   (advice-add 'org-refile :after 'org-save-all-org-buffers))
-
-(setq org-default-notes-file "~/org/notes.org")
-(setq org-agenda-files '("~/org/tasks.org"))
-(setq org-agenda-start-with-log-mode t)
-(setq org-log-done 'time)
-(setq org-log-into-drawer t)
-(setq org-agenda-window-setup 'current-window)
-(setq org-agenda-restore-windows-after-quit t)
-(setq org-agenda-span 'day)
-(setq org-habit-show-habits-only-for-today t)
-
-;; todo keywords
-(setq org-todo-keywords
-      '((sequence "TODO(t)" "SOMEDAY(.)" "|" "DONE(x!)" "CANCELLED(c)")
-        (sequence "READ(r)" "STUDY(s)" "WRITE(w)" "|" "DONE(x)")))
 
 (use-package org-capture
   :ensure nil
@@ -251,51 +263,37 @@
   :custom
   (org-bullets-bullet-list '("◉")))
 
-(use-package visual-fill-column
-  :hook
-  (org-mode . (lambda ()
-                (setq visual-fill-column-width 120)
-                (setq visual-fill-column-center-text t)
-                (visual-fill-column-mode 1))))
-
 (with-eval-after-load 'org
   (require 'org-tempo)
   (dolist (language '(("el" . "src emacs-lisp")
                       ("py" . "src python")
                       ("sh" . "src shell")
-                      ("js" . "src js")
-                      ("cpp" . "src C++ :includes <iostream>")))
+                      ("js" . "src js")))
     (add-to-list 'org-structure-template-alist language)))
 
 (with-eval-after-load 'org
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '((C . t)
-     (js . t)
-     (shell . t)
-     (python . t)
+   '((python . t)
      (emacs-lisp . t))))
 
 (setq org-confirm-babel-evaluate nil)
 
-(setq org-clock-sound "~/.local/data/bell.wav")
-
 (add-hook 'prog-mode-hook
           (lambda ()
-            (hl-line-mode)
-            (display-line-numbers-mode t)
+            (set-fringe-style 8)
             (electric-pair-local-mode)))
 
 (use-package project
   :defer 0)
 
 (use-package lsp-mode
-  :commands  (lsp lsp-deferred)
+  :commands (lsp lsp-deferred)
   :hook
   (c-mode . lsp)
   (c++-mode . lsp)
   (web-mode . lsp)
-  (js2-mode . lsp)
+  (js-mode . lsp)
   :init
   (setq lsp-headerline-breadcrumb-enable 'nil)
   (setq lsp-keymap-prefix "C-c l"))
@@ -322,13 +320,9 @@
   (yas-global-mode 1)
   (yas-reload-all))
 
-(use-package evil-nerd-commenter
-  :bind ("M-/" . evilnc-comment-or-uncomment-lines))
-
 (use-package web-mode
   :mode (("\\.html?$" . web-mode)
          ("\\.djhtml$" . web-mode)
-         ("\\.tsx$" . web-mode)
          ("\\.mustache\\'" . web-mode)
          ("\\.phtml\\'" . web-mode)
          ("\\.as[cp]x\\'" . web-mode)
@@ -343,6 +337,7 @@
   (setq web-mode-enable-current-column-highlight t)
   (setq web-mode-auto-close-style 2))
 
+
 (use-package emmet-mode
   :hook
   (web-mode  . emmet-mode)
@@ -353,16 +348,23 @@
   :hook (python-mode . pyvenv-mode))
 
 (use-package js2-mode
-  :mode "\\.js\\'")
+  :commands (js2-minor-mode))
 
-(setq explicit-shell-file-name "/bin/bash")
+(use-package js
+  :ensure nil
+  :config
+  (setq js-indent-level 2)
+  (js2-minor-mode))
+
+(use-package typescript-mode
+  :mode "\\.ts\\'")
 
 (use-package dired
     :ensure nil
     :commands (dired dired-jump)
     :bind (("C-x C-j" . dired-jump))
     :custom ((dired-listing-switches "-lhAX --group-directories-first"))
-    :hook (dired-mode . (lambda () 
+    :hook (dired-mode . (lambda ()
                           (dired-hide-details-mode))))
 
   (use-package all-the-icons-dired
@@ -370,13 +372,22 @@
 
 (use-package tab-bar
   :ensure nil
+  :config
+  ;; set better faces for tabs
+  (set-face-attribute 'tab-bar nil :inherit 'mode-line)
+  (set-face-attribute 'tab-bar-tab nil
+                      :weight 'bold
+                      :slant 'italic
+                      :underline t
+                      :foreground "#aaee77")
+  (set-face-attribute 'tab-bar-tab-inactive nil
+                      :slant 'italic
+                      :foreground "#afafaf")
   :custom
-  (tab-bar-new-tab-choice "*dashboard*")
-  (tab-bar-border 5)
-  (tab-bar-separator "  ")
-  (tab-bar-tab-name-function 'tab-bar-tab-name-truncated)
-  (tab-bar-tab-name-truncated-max 16)
-  (tab-bar-close-button-show 'selected)
+  (tab-bar-new-tab-choice "*scratch*")
+  ;; don't show close and new buttons
+  (tab-bar-close-button-show nil)
+  (tab-bar-new-button-show nil)
   (tab-bar-close-last-tab-choice 'tab-bar-mode-disable))
 
 ;; undo-redo window configuration with C-c left and C-c right
@@ -398,6 +409,13 @@
          (window-height . 0.33)
          (side . bottom))))
 
+(setq-default window-divider-default-places t)
+(setq-default window-divider-default-bottom-width 2)
+(setq-default window-divider-default-right-width 2)
+(window-divider-mode t)
+(set-face-attribute 'window-divider nil
+                    :foreground "#b16e75")
+
 (setq initial-buffer-choice
       (lambda () (get-buffer "*dashboard*")))
 
@@ -407,30 +425,62 @@
 (global-unset-key (kbd "C-x C-b"))
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
+(use-package olivetti
+  :commands (olivetti-mode)
+  :hook
+  (org-mode . (lambda ()
+                (olivetti-mode)))
+  (Info-mode . (lambda ()
+                 (olivetti-mode)))
+  :config
+  (set-default 'olivetti-body-width 100))
+
 (use-package elfeed
   :hook
   (elfeed-show-mode . (lambda ()
                         (visual-line-mode)
-                        (visual-fill-column-mode)))
+                        (olivetti-mode)))
+  :config
+  (set-face-attribute 'elfeed-search-unread-title-face nil
+                      :font pr/fixed-pitch-font
+                      :slant 'italic
+                      :weight 'bold)
   :custom
   (elfeed-feeds
-   '(("https://www.reddit.com/r/emacs.rss" reddit emacs)
-     ("https://www.reddit.com/r/python.rss" reddit python)
-     ("https://www.reddit.com/r/cpp.rss" reddit C++)
-     ("https://www.reddit.com/r/git.rss" reddit git)
-     ("https://www.reddit.com/r/javascript.rss" reddit javascript)
-     ("https://javax0.wordpress.com/feed/" PeterVerhas Java)
-     ("https://planet.gnu.org/rss20.xml" GNU)
-     ("https://sachachua.com/blog/category/emacs/feed/" SachaChua emacs)
-     ("https://herbsutter.com/gotw/feed" HerbSutter C++))))
+   '(("https://www.reddit.com/r/emacs.rss" r/emacs)
+     ("http://nullprogram.com/feed/" nullprogram)
+     ("https://planet.emacslife.com/atom.xml" planetemacs)
+     ("https://planet.gnu.org/rss20.xml" gnu)
+     ("https://sachachua.com/blog/category/emacs/feed/" sachachua))))
 
-(defun pr/edit-emacs-config ()
-  "Edit the Emacs configuration file."
+(defun pr/kill-current-buffer ()
+  "Kill current buffer immediately."
   (interactive)
-  (find-file (expand-file-name "config.org" user-emacs-directory)))
+  (kill-buffer (current-buffer)))
 
-(global-set-key (kbd "C-c e") 'pr/edit-emacs-config)
-(global-set-key (kbd "C-c t") 'tab-bar-new-tab)
+(global-set-key (kbd "C-x k") 'pr/kill-current-buffer)
+
+(use-package pulse
+  :defer t
+  :ensure nil
+  :custom
+  (pulse-flag t)
+  (pulse-delay 0.03)
+  :config
+  (set-face-attribute 'pulse-highlight-start-face nil
+                      :background "#87ceeb"))
+
+(defun pr/pulse-momentary-highlight-one-line (&rest args)
+  "Momentarily highlight current line."
+  (pulse-momentary-highlight-one-line (point)))
+
+(dolist (command '(scroll-up-command
+                   scroll-down-command
+                   recenter-top-bottom
+                   other-window
+                   isearch-repeat-forward
+                   isearch-repeat-backward))
+  (advice-add command :after #'pr/pulse-momentary-highlight-one-line))
 
 ;; Lower the GC threshold, again
 (setq gc-cons-threshold 16000000)

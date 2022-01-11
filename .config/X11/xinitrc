@@ -1,8 +1,6 @@
-xwallpaper --zoom ~/.local/data/wallpaper &
-picom &
-sxhkd &
+xwallpaper --zoom ~/.local/data/wallpaper
 dunst &
+#picom &
 xrdb ~/.config/X11/Xresources
-xmodmap ~/.config/X11/xmodmaprc && xcape -e "Control_R=Escape"
-sh ~/.config/X11/touchpad.sh
-qtile start
+xmodmap ~/.config/X11/xmodmaprc
+exec qtile start

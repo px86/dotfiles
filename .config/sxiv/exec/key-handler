@@ -2,8 +2,8 @@
 
 #--------------------------------------------------------------------------
 
-wallpapers_dir=$(xdg-user-dir PICTURES)/Wallpapers
-wallpaper=$(xdg-user-dir RESOURCES)/wallpaper
+wallpapers_dir=$HOME/Pictures/Wallpapers
+wallpaper=$HOME/.local/data/wallpaper
 
 #---------------------------------------------------------------------------
 

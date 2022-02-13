@@ -1,27 +1,23 @@
+#XF86MonBrightness{Up,Down}
 
-# `brightness`, `volctrl` and `screenshot` are custom scripts, using `brightnessctl`, `pulsemixer` and `maim` under the hood.
+#XF86AudioMute
 
-XF86MonBrightness{Up,Down}
-	brightness {up,down}
+#XF86Audio{Raise,Lower}Volume
 
-XF86AudioMute
-	volctrl toggle
+#XF86Audio{Prev,Play,Next}
 
-XF86Audio{Raise,Lower}Volume
-	volctrl {up,down}
+#{_,super} + Print
+#	screenshot {_,-s}
 
-# XF86Audio{Prev,Play,Next}
-
-{_,super} + Print
-	screenshot {_,-s}
-
-super + o ; {e,d,w,p,h,i,m,f,t}
-	{emacs,\
-	emacsclient -ca '',\
-	firefox,\
-	firefox --private-window,\
-	spacefm,\
-	sxiv -bt $(xdg-user-dir PICTURES)/Wallpapers/,\
+super + o ; {e,h,w,p,i,s,m,f,t,b,d}
+	{emacsclient -ca '',\
+	pcmanfm,\
+	brave-browser,\
+	brave-browser --incognito,\
+	sxiv -bt ~/Pictures/Wallpapers/,\
+	sxiv -bt ~/Pictures/Screenshots/,\
 	deadbeef,\
 	walc,\
-	telegram}
+	telegram,\
+	bmark,\
+	dox}

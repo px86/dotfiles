@@ -4,3 +4,4 @@ dunst &
 xrdb ~/.config/X11/Xresources
 xmodmap ~/.config/X11/xmodmaprc
 exec qtile start
+#exec awesome

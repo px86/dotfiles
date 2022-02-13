@@ -35,16 +35,17 @@ set hidden
 
 set termguicolors
 set cursorline
-set laststatus=2
+"set laststatus=2
+set laststatus=0
 
 set background=dark
-colorscheme OceanicNext
+colorscheme dracula
 
 set noshowmode
 
-let g:lightline = {
-      \ 'colorscheme': 'one',
-      \ }
+"let g:lightline = {
+"      \ 'colorscheme': 'one',
+"      \ }
 
 let mapleader = " "
 set path+=**

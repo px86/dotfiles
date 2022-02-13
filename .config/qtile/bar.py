@@ -9,8 +9,6 @@ widget_defaults = dict(
     padding=4,
 )
 
-extension_defaults = widget_defaults.copy()
-
 def _decoration(fg, bg, icon=''):
     '''TextBox widget for arrow style decoration.'''
     return widget.TextBox(
@@ -47,6 +45,7 @@ _widgets_left = [
 
     widget.Prompt(
         ignore_dups_history=True,
+        fontsize=14,
         prompt='spawn: ',
         foreground=fg['prompt'],
         background=bg['widget'],
@@ -109,7 +108,7 @@ _widgets_right = [
         format='{MemUsed:.0f}mb',
         fmt=' {}',
         mouse_callbacks={
-            'Button1': lambda: qtile.cmd_spawn('xterm -e btop')
+            'Button1': lambda: qtile.cmd_spawn('xterm -fullscreen -T float-me -e btop')
         },
         update_interval=10,
         foreground=fg['memory'],
@@ -149,6 +148,8 @@ _widgets_right = [
 bar = bar.Bar(
     size=18,
     opacity=1.0,
+    border_color=bg['bar'],
+    border_width=[0, 0, 2, 0],
     background=bg['bar'],
     widgets=_widgets_left + [widget.Spacer()] + _widgets_right,
 )

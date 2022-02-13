@@ -2,7 +2,8 @@
 (setq gc-cons-threshold (* 64 1000000)) ;;; 64MB
 
 (setq native-comp-async-report-warnings-errors nil)
-(add-to-list 'native-comp-eln-load-path (expand-file-name "eln-cache/" user-emacs-directory))
+(add-to-list 'native-comp-eln-load-path
+             (expand-file-name "eln-cache/" user-emacs-directory))
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
@@ -27,8 +28,8 @@
 (setq initial-scratch-message "")
 
 ;; Set frame transparency
-(set-frame-parameter (selected-frame) 'alpha '(100 . 100))
-(add-to-list 'default-frame-alist `(alpha . (100 . 100)))
+(set-frame-parameter (selected-frame) 'alpha '(95 . 95))
+(add-to-list 'default-frame-alist `(alpha . (95 . 95)))
 
 ;; Fonts
 (setq pr/fixed-pitch-font "Fantasque Sans Mono")
@@ -130,15 +131,14 @@ and `pr/dark-theme'"
   :config
   (dashboard-setup-startup-hook)
   :custom
-  (dashboard-banner-logo-title "Do Something Great(ly)!")
   (dashboard-startup-banner 'logo)
   (dashboard-center-content t)
   (dashboard-set-heading-icons t)
   (dashboard-set-file-icons t)
   (dashboard-set-init-info t)
   (dashboard-projects-backend 'project-el)
-  (dashboard-items '((recents  . 4)
-                     (projects . 3)
+  (dashboard-items '((recents  . 3)
+                     (projects . 5)
                      (registers . 5))))
 
 (use-package savehist
@@ -149,8 +149,6 @@ and `pr/dark-theme'"
 (use-package vertico
   :custom
   (vertico-cycle t)
-  ;; :custom-face
-  ;; (vertico-current ((t (:background "#3a3f5a"))))
   :init
   (vertico-mode))
 
@@ -164,6 +162,7 @@ and `pr/dark-theme'"
 (use-package marginalia
   :after vertico
   :custom
+  (marginalia-align 'right)
   (marginalia-annotators '(marginalia-annotators-heavy
                            marginalia-annotators-light nil))
   :init
@@ -206,6 +205,7 @@ and `pr/dark-theme'"
   :hook
   (org-mode . (lambda ()
                 (pr/org-font-setup)
+                (flyspell-mode)
                 (org-indent-mode)
                 (visual-line-mode 1)))
   :custom
@@ -281,11 +281,15 @@ and `pr/dark-theme'"
 
 (add-hook 'prog-mode-hook
           (lambda ()
+            ;; <tab> is already taken by company expand
+            (local-set-key (kbd "C-<tab>") 'yas-expand)
             (set-fringe-style 8)
             (electric-pair-local-mode)))
 
 (use-package project
   :defer 0)
+
+(use-package magit)
 
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
@@ -317,6 +321,7 @@ and `pr/dark-theme'"
   :config
   (setq yas-snippet-dirs
         `( ,(concat user-emacs-directory "snippets")))
+  (add-to-list 'warning-suppress-types '(yasnippet backquote-change))
   (yas-global-mode 1)
   (yas-reload-all))
 
@@ -359,6 +364,13 @@ and `pr/dark-theme'"
 (use-package typescript-mode
   :mode "\\.ts\\'")
 
+(use-package multiple-cursors
+  :bind
+  ("C-S-c C-S-c" . mc/edit-lines)
+  ("C->" . mc/mark-next-like-this)
+  ("C-<" . mc/mark-previous-like-this)
+  ("C-c C-<" . mc/mark-all-like-this))
+
 (use-package dired
     :ensure nil
     :commands (dired dired-jump)
@@ -396,14 +408,14 @@ and `pr/dark-theme'"
 (setq display-buffer-alist
       `((,(concat "\\*.*"
                   "\\(Backtrace"
+                  "\\|Compile-Log"
+                  "\\|compilation"
                   "\\|Warnings"
                   "\\|Compile-Log"
                   "\\|compilation"
                   "\\|Flycheck"
                   "\\|Flymake"
                   "\\|vterm"
-                  "\\|ansi-term"
-                  "\\|term"
                   "\\).*\\*")
          (display-buffer-in-side-window)
          (window-height . 0.33)
@@ -481,6 +493,13 @@ and `pr/dark-theme'"
                    isearch-repeat-forward
                    isearch-repeat-backward))
   (advice-add command :after #'pr/pulse-momentary-highlight-one-line))
+
+(defun pr/launch-xterm-in-cwd ()
+  "Launch XTerm in the current working directory."
+  (interactive)
+  (start-process "XTerm" nil "xterm"))
+
+(global-set-key (kbd "s-t") #'pr/launch-xterm-in-cwd)
 
 ;; Lower the GC threshold, again
 (setq gc-cons-threshold 16000000)

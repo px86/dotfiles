@@ -25,7 +25,7 @@ groups = [
         Match(wm_class=_communication),
     ]),
     ScratchPad(name='scratchpad', dropdowns=[
-        DropDown(name='term', cmd='xterm -T dropdown', x=0.1, y=0.1,
-                 width=0.8, height=0.8, opacity=0.90),
+        DropDown(name='term', cmd='xterm -T dropdown -fullscreen',
+                 x=0, y=0, width=1, height=1, opacity=0.95),
     ]),
 ]

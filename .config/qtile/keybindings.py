@@ -22,8 +22,8 @@ keys = [
     Key('M-l', lazy.layout.right()),
     Key('M-<space>', lazy.layout.next()),
 
-    Key('M-<Left>',  lazy.screen.prev_group(skip_empty=False)),
-    Key('M-<Right>', lazy.screen.next_group(skip_empty=False)),
+    Key('M-<Left>',  lazy.screen.prev_group(skip_empty=True)),
+    Key('M-<Right>', lazy.screen.next_group(skip_empty=True)),
 
     Key('M-f', lazy.window.toggle_maximize()),
     Key('M-S-<space>', lazy.window.toggle_floating()),
@@ -36,6 +36,7 @@ keys = [
     Key('M-n', lazy.next_layout()),
 
     Key('M-p', lazy.spawncmd()),
+    Key('M-S-p', lazy.spawn('rofi -show drun')),
     Key('M-<Return>', lazy.spawn('xterm')),
 
     # SHIFT MODE #
@@ -100,13 +101,14 @@ keys = [
         Key('b', lazy.spawn('bmark')),
         Key('d', lazy.spawn('dox')),
     ]),
-
+    # Lock the screen
     Key('M-S-l', lazy.spawn('slock -m "Locked at $(date)"', shell=True)),
 ]
 
 for group in groups:
     i = group.name
     if len(i)==1:
+        print(f'Group name: {i}')
         keys.extend([
             Key(f'M-{i}',   lazy.group[i].toscreen()),
             Key(f'M-S-{i}', lazy.window.togroup(i, switch_group=False))

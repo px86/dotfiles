@@ -20,7 +20,7 @@ from libqtile.config import Click, Drag, Screen, Match
 from keybindings import keys, Mod, modifier_keys
 from groups import groups
 from styles import background as bg
-from bar import bar, widget_defaults, extension_defaults
+from bar import bar, widget_defaults
 
 # -----------------------------------------------------------------------
 # LAYOUTS
@@ -67,12 +67,6 @@ mouse = [
     Click([Mod], 'Button2', lazy.window.bring_to_front()),
 ]
 
-dgroups_key_binder = None
-dgroups_app_rules = []
-follow_mouse_focus = True
-bring_front_click = False
-cursor_warp = True
-
 floating_layout = layout.Floating(
     border_width=3,
     border_focus='#cd69c9',
@@ -87,9 +81,18 @@ floating_layout = layout.Floating(
         Match(wm_class='ssh-askpass'),   # ssh-askpass
         Match(title='branchdialog'),     # gitk
         Match(title='pinentry'),         # GPG key password entry
+        Match(title='float-me'),         # Float certain TUI applications
     ])
 
+dgroups_key_binder = None
+dgroups_app_rules = []
+follow_mouse_focus = True
+bring_front_click = 'floating_only'
+reconfigure_screens = True
+cursor_warp = True
+extension_defaults = widget_defaults.copy()
 auto_fullscreen = True
+auto_minimize = True
 focus_on_window_activation = 'smart'
 wmname = 'LG3D'
 

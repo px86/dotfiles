@@ -65,22 +65,22 @@
 
 #+begin_src emacs-lisp
   ;; Set frame transparency
-  (set-frame-parameter (selected-frame) 'alpha '(95 . 95))
-  (add-to-list 'default-frame-alist `(alpha . (95 . 95)))
+  (set-frame-parameter (selected-frame) 'alpha '(100 . 100))
+  (add-to-list 'default-frame-alist `(alpha . (100 . 100)))
 #+end_src
 
 ** Font/Face Setup
 
 #+begin_src emacs-lisp
   ;; Fonts
-  (setq pr/fixed-pitch-font "Fantasque Sans Mono")
+  (setq pr/fixed-pitch-font "FantasqueSans Mono")
   (setq pr/variable-pitch-font "Open Sans")
 
   (defun pr/set-font-faces ()
     "Sets font faces."
     (set-face-attribute 'default nil
                         :font pr/fixed-pitch-font
-                        :weight 'normal
+                        :weight 'bold
                         :height 120)
 
     (set-face-attribute 'fixed-pitch nil
@@ -236,8 +236,10 @@
   (use-package vertico
     :custom
     (vertico-cycle t)
+    (vertico-resize t)
     :init
-    (vertico-mode))
+    (vertico-mode)
+    (vertico-reverse-mode))
 #+end_src
 
 ** Orderless
@@ -419,7 +421,14 @@
   (use-package project
     :defer 0)
 
-  (use-package magit)
+  (use-package magit
+    :commands magit-status
+    :custom
+    (magit-display-buffer-function
+     #'magit-display-buffer-same-window-except-diff-v1))
+
+  (use-package forge
+    :after magit)
 #+end_src
 
 ** LSP mode
@@ -432,6 +441,8 @@
     (c++-mode . lsp)
     (web-mode . lsp)
     (js-mode . lsp)
+    (typescript-mode . lsp)
+    (python-mode . lsp)
     :init
     (setq lsp-headerline-breadcrumb-enable 'nil)
     (setq lsp-keymap-prefix "C-c l"))
@@ -520,7 +531,16 @@
     (js2-minor-mode))
 
   (use-package typescript-mode
-    :mode "\\.ts\\'")
+    :mode "\\.ts\\'"
+    :config
+    (setq typescript-indent-level 2))
+#+end_src
+
+** RESTclient
+
+#+begin_src emacs-lisp
+  (use-package restclient
+    :commands (restclient-mode))
 #+end_src
 
 ** Multiple Cursors
@@ -540,7 +560,8 @@
   (use-package dired
       :ensure nil
       :commands (dired dired-jump)
-      :bind (("C-x C-j" . dired-jump))
+      :bind (("C-x C-j" . dired-jump)
+             ("C-x C-d" . dired))
       :custom ((dired-listing-switches "-lhAX --group-directories-first"))
       :hook (dired-mode . (lambda ()
                             (dired-hide-details-mode))))
@@ -597,7 +618,7 @@
                     "\\|vterm"
                     "\\).*\\*")
            (display-buffer-in-side-window)
-           (window-height . 0.33)
+           (window-height . 0.25)
            (side . bottom))))
 #+end_src
 
@@ -658,11 +679,7 @@
                         :weight 'bold)
     :custom
     (elfeed-feeds
-     '(("https://www.reddit.com/r/emacs.rss" r/emacs)
-       ("http://nullprogram.com/feed/" nullprogram)
-       ("https://planet.emacslife.com/atom.xml" planetemacs)
-       ("https://planet.gnu.org/rss20.xml" gnu)
-       ("https://sachachua.com/blog/category/emacs/feed/" sachachua))))
+     '(("http://nullprogram.com/feed/" nullprogram))))
 #+end_src
 
 * Some Shortcuts

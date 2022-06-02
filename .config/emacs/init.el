@@ -28,19 +28,19 @@
 (setq initial-scratch-message "")
 
 ;; Set frame transparency
-(set-frame-parameter (selected-frame) 'alpha '(95 . 95))
-(add-to-list 'default-frame-alist `(alpha . (95 . 95)))
+(set-frame-parameter (selected-frame) 'alpha '(100 . 100))
+(add-to-list 'default-frame-alist `(alpha . (100 . 100)))
 
 ;; Fonts
-(setq pr/fixed-pitch-font "Fantasque Sans Mono")
+(setq pr/fixed-pitch-font "Victor Mono")
 (setq pr/variable-pitch-font "Open Sans")
 
 (defun pr/set-font-faces ()
   "Sets font faces."
   (set-face-attribute 'default nil
                       :font pr/fixed-pitch-font
-                      :weight 'normal
-                      :height 120)
+                      :weight 'bold
+                      :height 110)
 
   (set-face-attribute 'fixed-pitch nil
                       :font pr/fixed-pitch-font
@@ -149,8 +149,10 @@ and `pr/dark-theme'"
 (use-package vertico
   :custom
   (vertico-cycle t)
+  (vertico-resize t)
   :init
-  (vertico-mode))
+  (vertico-mode)
+  (vertico-reverse-mode))
 
 (use-package orderless
   :init
@@ -289,7 +291,14 @@ and `pr/dark-theme'"
 (use-package project
   :defer 0)
 
-(use-package magit)
+(use-package magit
+  :commands magit-status
+  :custom
+  (magit-display-buffer-function
+   #'magit-display-buffer-same-window-except-diff-v1))
+
+(use-package forge
+  :after magit)
 
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
@@ -298,6 +307,8 @@ and `pr/dark-theme'"
   (c++-mode . lsp)
   (web-mode . lsp)
   (js-mode . lsp)
+  (typescript-mode . lsp)
+  (python-mode . lsp)
   :init
   (setq lsp-headerline-breadcrumb-enable 'nil)
   (setq lsp-keymap-prefix "C-c l"))
@@ -362,7 +373,12 @@ and `pr/dark-theme'"
   (js2-minor-mode))
 
 (use-package typescript-mode
-  :mode "\\.ts\\'")
+  :mode "\\.ts\\'"
+  :config
+  (setq typescript-indent-level 2))
+
+(use-package restclient
+  :commands (restclient-mode))
 
 (use-package multiple-cursors
   :bind
@@ -374,7 +390,8 @@ and `pr/dark-theme'"
 (use-package dired
     :ensure nil
     :commands (dired dired-jump)
-    :bind (("C-x C-j" . dired-jump))
+    :bind (("C-x C-j" . dired-jump)
+           ("C-x C-d" . dired))
     :custom ((dired-listing-switches "-lhAX --group-directories-first"))
     :hook (dired-mode . (lambda ()
                           (dired-hide-details-mode))))
@@ -418,7 +435,7 @@ and `pr/dark-theme'"
                   "\\|vterm"
                   "\\).*\\*")
          (display-buffer-in-side-window)
-         (window-height . 0.33)
+         (window-height . 0.25)
          (side . bottom))))
 
 (setq-default window-divider-default-places t)
@@ -459,11 +476,7 @@ and `pr/dark-theme'"
                       :weight 'bold)
   :custom
   (elfeed-feeds
-   '(("https://www.reddit.com/r/emacs.rss" r/emacs)
-     ("http://nullprogram.com/feed/" nullprogram)
-     ("https://planet.emacslife.com/atom.xml" planetemacs)
-     ("https://planet.gnu.org/rss20.xml" gnu)
-     ("https://sachachua.com/blog/category/emacs/feed/" sachachua))))
+   '(("http://nullprogram.com/feed/" nullprogram))))
 
 (defun pr/kill-current-buffer ()
   "Kill current buffer immediately."

@@ -28,23 +28,23 @@
 (setq initial-scratch-message "")
 
 ;; Set frame transparency
-(set-frame-parameter (selected-frame) 'alpha '(100 . 100))
-(add-to-list 'default-frame-alist `(alpha . (100 . 100)))
+(set-frame-parameter (selected-frame) 'alpha '(95 . 95))
+(add-to-list 'default-frame-alist `(alpha . (95 . 95)))
 
 ;; Fonts
-(setq pr/fixed-pitch-font "Victor Mono")
+(setq pr/fixed-pitch-font "Caskaydia Cove Nerd Font")
 (setq pr/variable-pitch-font "Open Sans")
 
 (defun pr/set-font-faces ()
   "Sets font faces."
   (set-face-attribute 'default nil
                       :font pr/fixed-pitch-font
-                      :weight 'bold
+                      :weight 'normal
                       :height 110)
 
   (set-face-attribute 'fixed-pitch nil
                       :font pr/fixed-pitch-font
-                      :weight 'normal
+                      :weight 'regular
                       :height 1.0)
 
   (set-face-attribute 'variable-pitch  nil
@@ -97,7 +97,7 @@
 (use-package all-the-icons)
 
 (setq pr/light-theme 'doom-gruvbox-light)
-(setq pr/dark-theme 'doom-rouge)
+(setq pr/dark-theme 'doom-dracula)
 (setq pr/current-theme-variant "dark")
 
 (defun pr/toggle-theme ()
@@ -286,6 +286,7 @@ and `pr/dark-theme'"
             ;; <tab> is already taken by company expand
             (local-set-key (kbd "C-<tab>") 'yas-expand)
             (set-fringe-style 8)
+            (hl-line-mode)
             (electric-pair-local-mode)))
 
 (use-package project
@@ -363,14 +364,10 @@ and `pr/dark-theme'"
 (use-package pyvenv
   :hook (python-mode . pyvenv-mode))
 
-(use-package js2-mode
-  :commands (js2-minor-mode))
-
 (use-package js
   :ensure nil
   :config
-  (setq js-indent-level 2)
-  (js2-minor-mode))
+  (setq js-indent-level 2))
 
 (use-package typescript-mode
   :mode "\\.ts\\'"

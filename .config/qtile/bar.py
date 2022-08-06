@@ -82,7 +82,7 @@ _widgets_right = [
 
     widget.Wlan(
         interface='wlp2s0',
-        format='直 {essid}:{quality}/70',
+        format='直 {essid}:{percent:2.0%}',
         disconnected_message='睊 ',
         mouse_callbacks={
             'Button1': lambda: qtile.cmd_spawn('nmcli networking on'),
@@ -147,9 +147,10 @@ _widgets_right = [
 
 bar = bar.Bar(
     size=18,
-    opacity=1.0,
+    opacity=0.97,
     border_color=bg['bar'],
-    border_width=[0, 0, 2, 0],
+    border_width=2,
+    #margin=[8, 10, 0, 10],
     background=bg['bar'],
     widgets=_widgets_left + [widget.Spacer()] + _widgets_right,
 )

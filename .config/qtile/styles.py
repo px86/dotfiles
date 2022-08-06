@@ -2,14 +2,15 @@
 
 font = {
     'sans-serif': 'Open Sans Bold',
-    'monospace': 'CaskaydiaCove Nerd Font Bold',
+    'monospace': 'Caskaydia Cove Nerd Font Bold',
     'icon': 'FontAwesome',
 }
 
 background = {
-    'bar': '#000000',
+    'bar': '#272a36',   # dracula darkest
+    # 'bar': '#000000', # black
     'widget': '#3b4252',
-    'border': '#cd69c9',
+    'border': '#bf616a',
 }
 
 foreground = {

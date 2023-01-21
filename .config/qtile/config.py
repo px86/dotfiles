@@ -69,8 +69,8 @@ mouse = [
 
 floating_layout = layout.Floating(
     border_width=3,
-    border_focus='#cd69c9',
-    border_normal='#000000',
+    border_focus=bg['border'],
+    border_normal=bg['bar'],
     float_rules=[
         *layout.Floating.default_float_rules,
         Match(wm_class='GNU Octave'),
@@ -79,8 +79,8 @@ floating_layout = layout.Floating(
         Match(wm_class='makebranch'),    # gitk
         Match(wm_class='maketag'),       # gitk
         Match(wm_class='ssh-askpass'),   # ssh-askpass
+        Match(wm_class='pinentry'),      # GPG key password entry
         Match(title='branchdialog'),     # gitk
-        Match(title='pinentry'),         # GPG key password entry
         Match(title='float-me'),         # Float certain TUI applications
     ])
 

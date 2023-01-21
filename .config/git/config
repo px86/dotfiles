@@ -2,7 +2,6 @@
 	name = Pushkar Raj
 	email = px86@protonmail.com
 	username = px86
-	signingkey = 8A90AD190A3EF44AB5AEB76BA68C93977E7EBF58
 [init]
 	defaultBranch = main
 [color]

@@ -32,7 +32,7 @@
 (add-to-list 'default-frame-alist `(alpha . (95 . 95)))
 
 ;; Fonts
-(setq pr/fixed-pitch-font "Caskaydia Cove Nerd Font")
+(setq pr/fixed-pitch-font "Cascadia Code")
 (setq pr/variable-pitch-font "Open Sans")
 
 (defun pr/set-font-faces ()
@@ -64,7 +64,11 @@
 (add-hook 'before-save-hook
           'delete-trailing-whitespace)
 
-(set-register ?E '(file . "~/.config/emacs/config.org"))
+(set-register ?E `(file . ,(concat
+                           (file-name-as-directory
+                            user-emacs-directory)
+                           "config.org")))
+
 (set-register ?Q '(file . "~/.config/qtile/config.py"))
 (set-register ?B '(file . "~/.local/data/bookmarks"))
 
@@ -116,6 +120,9 @@ and `pr/dark-theme'"
 
 (use-package doom-themes
   :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
   (load-theme pr/dark-theme t)
   (set-face-attribute 'font-lock-comment-face  nil
                       :slant 'italic))
@@ -139,7 +146,7 @@ and `pr/dark-theme'"
   (dashboard-projects-backend 'project-el)
   (dashboard-items '((recents  . 3)
                      (projects . 5)
-                     (registers . 5))))
+                     (registers . 3))))
 
 (use-package savehist
   :config
@@ -170,7 +177,7 @@ and `pr/dark-theme'"
   :init
   (marginalia-mode))
 
-(defun pr/org-font-setup ()
+(defun pr/org-font-face-setup ()
   "Set necessary font faces in `org-mode'."
 
   (dolist (face '((org-level-1 . 1.25)
@@ -185,7 +192,7 @@ and `pr/dark-theme'"
                         :height (cdr face)
                         :weight 'bold))
 
-  ;; fixed-pitch setup
+  ;; fixed-pitch face setup
   (dolist (face '(org-table
                   org-formula org-block
                   org-code org-verbatim
@@ -203,62 +210,74 @@ and `pr/dark-theme'"
 
 (use-package org
   :pin org
-  :defer t
+  :commands
+  (org-capture org-agenda)
   :hook
   (org-mode . (lambda ()
-                (pr/org-font-setup)
+                (pr/org-font-face-setup)
                 (flyspell-mode)
                 (org-indent-mode)
                 (visual-line-mode 1)))
   :custom
-  (org-ellipsis " ▾")
   (org-directory "~/Org")
+  (org-ellipsis " ▾")
   (org-hide-emphasis-markers t)
-  (org-clock-sound "~/.local/data/bell.wav")
+  (org-startup-folded 'overview)
   :config
-  (advice-add 'org-refile :after 'org-save-all-org-buffers))
+  (require 'org-habit)
+  (add-to-list 'org-modules 'org-habit)
+  (setq org-habit-graph-column 60)
+  (advice-add 'org-refile
+              :after 'org-save-all-org-buffers)
 
-(use-package org-capture
-  :ensure nil
-  :commands (org-capture)
-  :bind ("C-c c" . org-capture)
-  :init
-  (setq org-capture-templates
-        `(("t" "Personal TODO item" entry
-           (file+headline "tasks.org" "Personal")
-           ,(concat "* TODO %^{Title}\n"
-                    ":PROPERTIES:\n"
-                    ":CREATED: %U\n"
-                    ":END:\n"))
+  ;; Add a clock sound for `org-timer-set-timer'
+  (let ((sound-file "~/.local/data/bell.wav"))
+    (if (file-exists-p sound-file)
+        (setq org-clock-sound sound-file))))
 
-          ("u" "University related work" entry
-           (file+headline "tasks.org" "University")
-           ,(concat "* %^{|TODO|READ|WRITE|STUDY} %^{Title}\n"
-                    "DEADLINE: %^{DEADLINE}t\n"
-                    ":PROPERTIES:\n"
-                    ":CREATED: %U\n"
-                    ":END:\n"
-                    "Note: %?\n"))
+(global-set-key (kbd "C-c c") #'org-capture)
 
-          ("q" "Question in mind" entry
-           (file+headline "tasks.org" "Figure this out")
-           ,(concat "* %^{Title}\n"
-                    ":PROPERTIES:\n"
-                    ":CREATED: %U\n"
-                    ":END:\n"
-                    "_Initial Thought_\n"
-                    "%?"))
+(setq org-capture-templates
+      `( ("t" "Todo item" entry
+          (file+headline "tasks.org" "Tasks")
+          ,(concat "* %^{|TODO|READ|WRITE} %^{Title}\n"
+                   "DEADLINE: %^{DEADLINE}t\n"
+                   ":PROPERTIES:\n"
+                   ":CREATED: %U\n"
+                   ":END:\n"
+                   "Note: %?\n"))
 
-          ("r" "Reading list item" entry
-           (file+headline "tasks.org" "Reading List")
-           ,(concat "* READ %^{Description}\n"
-                    ":PROPERTIES:\n"
-                    ":CREATED: %U\n"
-                    ":TOPIC: %^{Topic}\n"
-                    ":END:\n"
-                    "URL: %(current-kill 0)\n"
-                    "Note: %?\n")
-           :empty-lines-after 1))))
+         ("n" "Quick note" entry
+          (file+headline "notebook.org" "Quick Notes")
+          ,(concat "* %^{Title}\n"
+                   ":PROPERTIES:\n"
+                   ":CREATED: %U\n"
+                   ":END:\n"
+                   "Note: %?")
+          :empty-lines-after 1)
+
+         ("r" "Reading list item" entry
+          (file+headline "notebook.org" "Reading List")
+          ,(concat "* READ %^{Description}\n"
+                   ":PROPERTIES:\n"
+                   ":CREATED: %U\n"
+                   ":TOPIC: %^{Topic}\n"
+                   ":END:\n"
+                   "URL: %(current-kill 0)\n"
+                   "Note: %?\n")
+          :empty-lines-after 1)))
+
+(global-set-key (kbd "C-c a") #'org-agenda)
+
+(setq org-agenda-files '("~/Org/tasks.org"))
+(setq org-agenda-start-with-log-mode t)
+(setq org-log-done 'time)
+(setq org-log-into-drawer t)
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
+        (sequence "READ(r)" "WRITE(w)" "|" "COMPLETED(c@)")
+        (sequence "BACKLOG(b)" "PLAN(p)" "READY(r)" "ACTIVE(a)"
+                  "REVIEW(v)" "WAIT(w@/!)" "HOLD(h)" "|" "COMPLETED(c)" "CANC(k@)")))
 
 (use-package org-bullets
   :hook (org-mode . org-bullets-mode)
@@ -298,21 +317,33 @@ and `pr/dark-theme'"
   (magit-display-buffer-function
    #'magit-display-buffer-same-window-except-diff-v1))
 
-(use-package forge
-  :after magit)
-
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
   :hook
   (c-mode . lsp)
   (c++-mode . lsp)
   (web-mode . lsp)
+  (css-mode . lsp)
   (js-mode . lsp)
   (typescript-mode . lsp)
   (python-mode . lsp)
+  ;; (clojure-mode . lsp)
   :init
   (setq lsp-headerline-breadcrumb-enable 'nil)
-  (setq lsp-keymap-prefix "C-c l"))
+  (setq lsp-keymap-prefix "C-c l")
+  :config
+  (setq-default lsp-clients-clangd-args
+                '("--cross-file-rename"
+                  "--enable-config"
+                  "--fallback-style=WebKit"
+                  "--clang-tidy"
+                  "--clang-tidy-checks='*'"
+                  "--suggest-missing-includes"
+                  "--header-insertion=iwyu"
+                  "--header-insertion-decorators=0"))
+  (setq-default c-basic-offset 4))
+
+;; (use-package lsp-ui)
 
 (use-package company
   :after lsp-mode
@@ -336,6 +367,13 @@ and `pr/dark-theme'"
   (add-to-list 'warning-suppress-types '(yasnippet backquote-change))
   (yas-global-mode 1)
   (yas-reload-all))
+
+(use-package multiple-cursors
+  :bind
+  ("C-S-c C-S-c" . mc/edit-lines)
+  ("C->" . mc/mark-next-like-this)
+  ("C-<" . mc/mark-previous-like-this)
+  ("C-c C-<" . mc/mark-all-like-this))
 
 (use-package web-mode
   :mode (("\\.html?$" . web-mode)
@@ -366,6 +404,8 @@ and `pr/dark-theme'"
 
 (use-package js
   :ensure nil
+  :init
+  (setq js-jsx-syntax t)
   :config
   (setq js-indent-level 2))
 
@@ -374,15 +414,79 @@ and `pr/dark-theme'"
   :config
   (setq typescript-indent-level 2))
 
+(add-hook 'emacs-lisp-mode-hook
+          (lambda ()
+            (setq-local company-backends
+                        '(company-elisp
+                          company-files
+                          company-yasnippet))
+            (company-mode)))
+
+(setq inferior-lisp-program "sbcl")
+
+(use-package lsp-java
+  :hook
+  (java-mode . lsp))
+
+;; TODO: discover the latest version of the jar file while downloading
+(defun pr/download-google-java-formatter ()
+  "Download google java format jar file from github."
+  (interactive)
+  (let ((filepath (expand-file-name
+                   "~/.local/lib/google-java-format.jar")))
+    (if (file-exists-p filepath)
+        (message "Error: file '%s' already exists!" filepath)
+      (start-process "wget" nil
+                     "wget" "-q"
+                     "https://github.com/google/google-java-format/releases/download/v1.15.0/google-java-format-1.15.0-all-deps.jar"
+                     "-O" filepath)
+      (message "done!"))))
+
+(defun pr/format-java-buffer ()
+  "Format current java buffer."
+  (interactive)
+  (let ((jarfile (expand-file-name
+                   "~/.local/lib/google-java-format.jar"))
+        (temp-buffer (generate-new-buffer " *java-format*"))
+        (temp-file (make-temp-file "java-format-error" nil))
+        ;; Always use 'utf-8-unix' & ignore the buffer coding system.
+        (default-process-coding-system '(utf-8-unix . utf-8-unix)))
+
+    (call-process-region nil nil "java" nil
+                         `(,temp-buffer ,temp-file) nil
+                         "-jar" jarfile "-")
+    (if (> (buffer-size temp-buffer)
+           0)
+        ;; Replace buffer with formatted code
+        (replace-buffer-contents temp-buffer)
+      (message "Error: could not format current buffer!"))
+    ;; Clean up
+    (kill-buffer temp-buffer)
+    (delete-file temp-file)))
+
+(use-package format-all
+  :hook
+  (prog-mode . format-all-ensure-formatter)
+  (c-mode . format-all-mode)
+  (c++-mode . format-all-mode)
+  (js-mode . format-all-mode)
+  (python-mode . format-all-mode)
+  :config
+  (setq-default format-all-formatters
+                '(("C" (clang-format "-style=file"))
+                  ("C++" (clang-format "-style=file"
+                                       "--fallback-style=WebKit"))
+                  ("CSS" prettier)
+                  ("Emacs Lisp" emacs-lisp)
+                  ("Go" gofmt)
+                  ("Java" (clang-format "-style=file"))
+                  ("JavaScript" prettier)
+                  ("Markdown" prettier)
+                  ("Python" black)
+                  ("TypeScript" prettier))))
+
 (use-package restclient
   :commands (restclient-mode))
-
-(use-package multiple-cursors
-  :bind
-  ("C-S-c C-S-c" . mc/edit-lines)
-  ("C->" . mc/mark-next-like-this)
-  ("C-<" . mc/mark-previous-like-this)
-  ("C-c C-<" . mc/mark-all-like-this))
 
 (use-package dired
     :ensure nil
@@ -419,6 +523,10 @@ and `pr/dark-theme'"
 ;; undo-redo window configuration with C-c left and C-c right
 (winner-mode)
 
+(setq split-height-threshold nil)
+;; Split vertically if width >= 145 characters
+(setq split-width-threshold 145)
+
 (setq display-buffer-alist
       `((,(concat "\\*.*"
                   "\\(Backtrace"
@@ -427,6 +535,7 @@ and `pr/dark-theme'"
                   "\\|Warnings"
                   "\\|Compile-Log"
                   "\\|compilation"
+                  "\\|Calendar"
                   "\\|Flycheck"
                   "\\|Flymake"
                   "\\|vterm"
@@ -473,7 +582,29 @@ and `pr/dark-theme'"
                       :weight 'bold)
   :custom
   (elfeed-feeds
-   '(("http://nullprogram.com/feed/" nullprogram))))
+   '(("http://nullprogram.com/feed/" nullprogram)
+     ("https://jenkov.com/rss.xml" jenkov-java)
+     ("https://javax0.wordpress.com/feed/" peter-verhas)
+     ("https://levelofindirection.com/main.rss" level-of-indirection)
+     ("https://blog.petrzemek.net/feed/" peter-zemek))))
+
+(use-package erc
+  :ensure nil
+  :commands
+  (erc-tls erc)
+  :custom
+  (erc-server "irc.libera.chat")
+  (erc-port 6697)
+  (erc-prompt (lambda () (concat (buffer-name) ">")))
+  (erc-nick "px86")
+  (erc-fill-column 100))
+
+(use-package denote
+  :commands
+  (denote)
+  :custom
+  (denote-directory "~/Notes")
+  (denote-known-keywords '("js" "nodejs" "cpp" "linux" "react" "emacs" "java")))
 
 (defun pr/kill-current-buffer ()
   "Kill current buffer immediately."
@@ -504,12 +635,23 @@ and `pr/dark-theme'"
                    isearch-repeat-backward))
   (advice-add command :after #'pr/pulse-momentary-highlight-one-line))
 
+(defun pr/launch-xterm ()
+  "Launch xterm in project root or in current working directory."
+  (interactive)
+  (let* ((filename (buffer-file-name))
+         (dir (if filename
+                  (vc-git-root filename)
+                nil))
+         (default-directory (or dir
+                                default-directory)))
+    (start-process "XTerm" nil "xterm")))
+
 (defun pr/launch-xterm-in-cwd ()
   "Launch XTerm in the current working directory."
   (interactive)
   (start-process "XTerm" nil "xterm"))
 
-(global-set-key (kbd "s-t") #'pr/launch-xterm-in-cwd)
+(global-set-key (kbd "s-t") #'pr/launch-xterm)
 
 ;; Lower the GC threshold, again
 (setq gc-cons-threshold 16000000)

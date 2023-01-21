@@ -1,4 +1,4 @@
-'''All the keybindings go here.'''
+"""All the keybindings go here."""
 
 from libqtile.config import KeyChord, EzKey as Key
 from libqtile.lazy import lazy
@@ -90,7 +90,7 @@ keys = [
     # Launch applications
     KeyChord([Mod], 'o', [
         Key('e', lazy.spawn('emacsclient -ca ""')),
-        Key('h', lazy.spawn('pcmanfm')),
+        Key('h', lazy.spawn('spacefm')),
         Key('w', lazy.spawn('brave-browser')),
         Key('p', lazy.spawn('brave-browser --incognito')),
         Key('i', lazy.spawn('sxiv -bt ~/Pictures/Wallpapers/',  shell=True)),
@@ -107,7 +107,7 @@ keys = [
 
 for group in groups:
     i = group.name
-    if len(i)==1:
+    if len(i) == 1:
         print(f'Group name: {i}')
         keys.extend([
             Key(f'M-{i}',   lazy.group[i].toscreen()),

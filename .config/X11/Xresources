@@ -49,7 +49,7 @@ xterm*internalBorder: 5
 XTerm*dynamicColors: on
 
 ! Font configuration
-XTerm*faceName:  Caskaydia Cove Nerd Font:style=regular
+XTerm*faceName:   Cascadia Code:style=regular
 XTerm*faceSize:  11.5
 xterm*faceSize1: 9.5
 xterm*faceSize2: 12

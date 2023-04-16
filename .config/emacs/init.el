@@ -1,9 +1,20 @@
+;; These are the only three types of machines that I use emacs on.
+(defvar pr/machine-type
+  (if (equal system-type 'gnu/linux)
+      (if (equal (string-search "android" system-configuration)
+                 nil)
+          "gnu/linux-laptop"  ; my gnu/linux laptop
+        "android-phone")      ; emacs running in termux on android
+    "windows-laptop")         ; work-laptop running windows
+  "The value is string indicating the system type on which emacs is currently running.")
+
 ;; Higher threshold for less frequent garbage collections during startup.
 (setq gc-cons-threshold (* 64 1000000)) ;;; 64MB
 
-(setq native-comp-async-report-warnings-errors nil)
-(add-to-list 'native-comp-eln-load-path
-             (expand-file-name "eln-cache/" user-emacs-directory))
+(when (native-comp-available-p)
+  (setq native-comp-async-report-warnings-errors nil)
+  (add-to-list 'native-comp-eln-load-path
+               (expand-file-name "eln-cache/" user-emacs-directory)))
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
@@ -15,11 +26,13 @@
 (setq echo-keystrokes 0.01)
 
 (menu-bar-mode -1)
-(tool-bar-mode -1)
-(tooltip-mode -1)
-(set-fringe-mode 10)
-(scroll-bar-mode -1)
 (column-number-mode)
+
+(unless (equal pr/machine-type "android-phone")
+  (tool-bar-mode -1)
+  (tooltip-mode -1)
+  (set-fringe-mode 10)
+  (scroll-bar-mode -1))
 
 (setq inhibit-startup-screen t
       scroll-conservatively 101)
@@ -635,23 +648,32 @@ and `pr/dark-theme'"
                    isearch-repeat-backward))
   (advice-add command :after #'pr/pulse-momentary-highlight-one-line))
 
-(defun pr/launch-xterm ()
-  "Launch xterm in project root or in current working directory."
-  (interactive)
-  (let* ((filename (buffer-file-name))
-         (dir (if filename
-                  (vc-git-root filename)
-                nil))
-         (default-directory (or dir
-                                default-directory)))
-    (start-process "XTerm" nil "xterm")))
+(when (equal pr/machine-type "gnu/linux-laptop")
 
-(defun pr/launch-xterm-in-cwd ()
-  "Launch XTerm in the current working directory."
-  (interactive)
-  (start-process "XTerm" nil "xterm"))
+  ;; needed for vc-git-root function
+  (require 'vc-git)
 
-(global-set-key (kbd "s-t") #'pr/launch-xterm)
+  (defun pr/launch-terminal ()
+    "Launch a terminal in project root or in current working directory."
+    (interactive)
+    (let* ((term (getenv "TERMINAL"))
+           (terminal (if term term "xterm"))
+           (filename (buffer-file-name))
+           (dir (if filename
+                    (vc-git-root filename)
+                  nil))
+           (default-directory (or dir
+                                  default-directory)))
+      (start-process "Terminal" nil terminal)))
+
+  (defun pr/launch-terminal-in-cwd ()
+    "Launch a terminal in the current working directory."
+    (interactive)
+    (let* ((term (getenv "TERMINAL"))
+           (terminal (if term term "xterm")))
+      (start-process "Terminal" nil terminal)))
+
+  (global-set-key (kbd "s-t") #'pr/launch-terminal))
 
 ;; Lower the GC threshold, again
 (setq gc-cons-threshold 16000000)

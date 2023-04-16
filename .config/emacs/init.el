@@ -12,7 +12,7 @@
 (setq gc-cons-threshold (* 64 1000000)) ;;; 64MB
 
 (when (native-comp-available-p)
-  (setq native-comp-async-report-warnings-errors nil)
+    (setq native-comp-async-report-warnings-errors nil)
   (add-to-list 'native-comp-eln-load-path
                (expand-file-name "eln-cache/" user-emacs-directory)))
 
@@ -78,12 +78,16 @@
           'delete-trailing-whitespace)
 
 (set-register ?E `(file . ,(concat
-                           (file-name-as-directory
-                            user-emacs-directory)
-                           "config.org")))
+                            (file-name-as-directory
+                             user-emacs-directory)
+                            "config.org")))
 
-(set-register ?Q '(file . "~/.config/qtile/config.py"))
-(set-register ?B '(file . "~/.local/data/bookmarks"))
+(when (equal pr/machine-type "gnu/linux-laptop")
+  (set-register ?Q '(file . "~/.config/qtile/config.py"))
+  (set-register ?B '(file . "~/.local/data/bookmarks")))
+
+(when (equal pr/machine-type "windows-laptop")
+  (set-register ?B '(file . "~/bookmarks.txt")))
 
 (require 'package)
 
@@ -374,6 +378,7 @@ and `pr/dark-theme'"
   :hook (lsp-mode . flycheck-mode))
 
 (use-package yasnippet
+  :after warnings
   :config
   (setq yas-snippet-dirs
         `( ,(concat user-emacs-directory "snippets")))

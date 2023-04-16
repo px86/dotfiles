@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: Org meta-data
+# key: <org
+# --
+
+#+TITLE: ${1:title}
+#+AUTHOR: ${2:Pushkar Raj}
+#+EMAIL: ${3:px86@protonmail.com}
+#+DATE: `(format-time-string "[%Y-%m-%d %a]")`
+
+$0

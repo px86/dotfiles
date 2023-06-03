@@ -4,8 +4,9 @@
 # --
 
 #+TITLE: ${1:title}
-#+AUTHOR: ${2:Pushkar Raj}
-#+EMAIL: ${3:px86@protonmail.com}
+#+SUBTITLE: ${2:subtitle}
+#+AUTHOR: ${3:Pushkar Raj}
+#+EMAIL: ${4:px86@protonmail.com}
 #+DATE: `(format-time-string "[%Y-%m-%d %a]")`
 
 $0

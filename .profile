@@ -1,17 +1,17 @@
 # px86's .bash_profile/.profile
-#                                   ______  __ __          
-#                                  /      \|  \  \         
-#        ______   ______   ______ |  ▓▓▓▓▓▓\\▓▓ ▓▓ ______  
-#       /      \ /      \ /      \| ▓▓_  \▓▓  \ ▓▓/      \ 
+#                                   ______  __ __
+#                                  /      \|  \  \
+#        ______   ______   ______ |  ▓▓▓▓▓▓\\▓▓ ▓▓ ______
+#       /      \ /      \ /      \| ▓▓_  \▓▓  \ ▓▓/      \
 #      |  ▓▓▓▓▓▓\  ▓▓▓▓▓▓\  ▓▓▓▓▓▓\ ▓▓ \   | ▓▓ ▓▓  ▓▓▓▓▓▓\
 #      | ▓▓  | ▓▓ ▓▓   \▓▓ ▓▓  | ▓▓ ▓▓▓▓   | ▓▓ ▓▓ ▓▓    ▓▓
 #      | ▓▓__/ ▓▓ ▓▓     | ▓▓__/ ▓▓ ▓▓     | ▓▓ ▓▓ ▓▓▓▓▓▓▓▓
 #      | ▓▓    ▓▓ ▓▓      \▓▓    ▓▓ ▓▓     | ▓▓ ▓▓\▓▓     \
 #      | ▓▓▓▓▓▓▓ \▓▓       \▓▓▓▓▓▓ \▓▓      \▓▓\▓▓ \▓▓▓▓▓▓▓
-#      | ▓▓                                                
-#      | ▓▓                                                
-#       \▓▓                                                
-#      
+#      | ▓▓
+#      | ▓▓
+#       \▓▓
+#
 #----------------------------------------------------------------------------
 
 ### PATH ###
@@ -30,7 +30,7 @@ export HISTFILE="$XDG_CACHE_HOME"/bash_history
 export NODE_REPL_HISTORY="$XDG_CACHE_HOME"/node_repl_history
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME"/npm/npmrc
 export PYTHONSTARTUP="$XDG_CONFIG_HOME"/python/python_startup.py
-export GPG_TTY=$(tty)
+export INPUTRC="$XDG_CONFIG_HOME"/readline/inputrc
 
 export _JAVA_AWT_WM_NONREPARENTING=1
 export WORKON_HOME="$XDG_DATA_HOME"/virtualenvs/

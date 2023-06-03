@@ -18,6 +18,7 @@ from libqtile.config import KeyChord
 from libqtile.config import EzKey as Key
 
 from libqtile.lazy import lazy
+from libqtile.extension import WindowList
 
 font = {
     "sans-serif":  "Open Sans Bold",
@@ -407,6 +408,13 @@ keys = [
     ),
     # Lock the screen
     Key("M-S-l", lazy.spawn('slock -m "Locked at $(date)"', shell=True)),
+
+    Key("M-S-w", lazy.run_extension(WindowList(
+        dmenu_font="Cascadia Code Italic",
+        dmenu_prompt="Switch to window: ",
+        dmenu_command="dmenu -l 10 -c -i",
+        item_format="{id}: {window}",
+    ))),
 ]
 
 

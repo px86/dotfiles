@@ -1,16 +1,16 @@
 # px86's .bashrc
 #
-#       __                         __                         
-#      |  \                       |  \                        
-#      | ▓▓____   ______   _______| ▓▓____   ______   _______ 
+#       __                         __
+#      |  \                       |  \
+#      | ▓▓____   ______   _______| ▓▓____   ______   _______
 #      | ▓▓    \ |      \ /       \ ▓▓    \ /      \ /       \
 #      | ▓▓▓▓▓▓▓\ \▓▓▓▓▓▓\  ▓▓▓▓▓▓▓ ▓▓▓▓▓▓▓\  ▓▓▓▓▓▓\  ▓▓▓▓▓▓▓
-#      | ▓▓  | ▓▓/      ▓▓\▓▓    \| ▓▓  | ▓▓ ▓▓   \▓▓ ▓▓      
-#      | ▓▓__/ ▓▓  ▓▓▓▓▓▓▓_\▓▓▓▓▓▓\ ▓▓  | ▓▓ ▓▓     | ▓▓_____ 
+#      | ▓▓  | ▓▓/      ▓▓\▓▓    \| ▓▓  | ▓▓ ▓▓   \▓▓ ▓▓
+#      | ▓▓__/ ▓▓  ▓▓▓▓▓▓▓_\▓▓▓▓▓▓\ ▓▓  | ▓▓ ▓▓     | ▓▓_____
 #      | ▓▓    ▓▓\▓▓    ▓▓       ▓▓ ▓▓  | ▓▓ ▓▓      \▓▓     \
 #       \▓▓▓▓▓▓▓  \▓▓▓▓▓▓▓\▓▓▓▓▓▓▓ \▓▓   \▓▓\▓▓       \▓▓▓▓▓▓▓
-#                                                             
-#                                                             
+#
+#
 #---------------------------------------------------------------------------
 
 # if not running interactively, return
@@ -46,6 +46,7 @@ alias grep="grep --color=auto"
 alias q="exit"
 alias ec="emacsclient -ta 'emacs -nw'"
 alias yta="youtube-dl -x -f bestaudio/best"
+alias bat="batcat"
 
 # git bare repository setup for dotfiles management
 alias dotfile="git --git-dir=$HOME/.local/dotfiles.git --work-tree=$HOME"

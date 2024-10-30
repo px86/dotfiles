@@ -45,20 +45,25 @@
 (setq initial-major-mode 'fundamental-mode)
 (setq initial-scratch-message "")
 
+(defvar my-buffers-to-bury (list "*dashboard*" "*scratch*")
+  "Bury these buffers instead of killing them.")
+
 (defun my-kill-current-buffer ()
-  "Bury *scratch* buffer instead of killing it. Kill other buffers immediately."
+  "Kill current buffer immediately, if it is not present in `my-buffers-to-bury'."
   (interactive)
-  (if (equal (buffer-name) "*scratch*")
+  (if (member (buffer-name) my-buffers-to-bury)
       (bury-buffer)
     (kill-buffer (current-buffer))))
 
 (global-set-key (kbd "C-x k") 'my-kill-current-buffer)
 
-(when my-gnu/linux-laptop-p
-  (set-frame-parameter (selected-frame) 'alpha '(95 . 95))
-  (add-to-list 'default-frame-alist `(alpha . (95 . 95))))
+;; (when my-gnu/linux-laptop-p
+;;   (set-frame-parameter (selected-frame) 'alpha '(95 . 95))
+;;   (add-to-list 'default-frame-alist `(alpha . (95 . 95))))
 
-(setq my-fixed-pitch-font "Cascadia Code")
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+(setq my-fixed-pitch-font "CaskaydiaCove Nerd Font")
 (setq my-variable-pitch-font "Open Sans")
 
 (defun my-set-font-faces ()
@@ -88,17 +93,21 @@
 (add-hook 'before-save-hook
           'delete-trailing-whitespace)
 
-(set-register ?E `(file . ,(concat
-                            (file-name-as-directory
-                             user-emacs-directory)
-                            "config.org")))
+(defun my-set-register-if-file-exists (key filename)
+  "Set the register with given KEY if FILENAME exists."
+  (if (file-exists-p filename)
+      (set-register key `(file . ,filename))))
+
+(my-set-register-if-file-exists ?E
+                                (concat (file-name-as-directory user-emacs-directory)
+                                        "config.org"))
 
 (when my-gnu/linux-laptop-p
-  (set-register ?Q '(file . "~/.config/qtile/qtile.org"))
-  (set-register ?B '(file . "~/.local/data/bookmarks")))
+  (my-set-register-if-file-exists ?Q "~/.config/qtile/config.py")
+  (my-set-register-if-file-exists ?B "~/.local/data/bookmarks"))
 
 (when my-windows-laptop-p
-  (set-register ?B '(file . "~/bookmarks.txt")))
+  (my-set-register-if-file-exists ?B "~/bookmarks.txt"))
 
 (global-unset-key (kbd "C-z"))
 
@@ -139,8 +148,8 @@
   :config
   (setq nerd-icons-scale-factor 1.25))
 
-(defvar my-light-theme 'doom-gruvbox-light)
-(defvar my-dark-theme 'doom-dracula)
+(defvar my-light-theme 'doom-solarized-light)
+(defvar my-dark-theme 'doom-ir-black)
 (defvar my-current-theme-variant 'dark)
 
 (defun my-toggle-theme ()
@@ -188,8 +197,6 @@ and `my-dark-theme'"
                           (projects . 5)
                           (registers . 3))))
 
-;;(use-package dashboard)
-
 (use-package savehist
   :config
   (setq history-length 25)
@@ -234,6 +241,23 @@ and `my-dark-theme'"
 (setq split-height-threshold nil)
 (setq split-width-threshold 145)
 
+;; (setq display-buffer-alist
+;;       `((,(concat "\\*.*"
+;;                   "\\(Backtrace"
+;;                   "\\|Compile-Log"
+;;                   "\\|compilation"
+;;                   "\\|Warnings"
+;;                   "\\|Compile-Log"
+;;                   "\\|compilation"
+;;                   "\\|Calendar"
+;;                   "\\|Flycheck"
+;;                   "\\|Flymake"
+;;                   "\\|vterm"
+;;                   "\\).*\\*")
+;;          (display-buffer-in-side-window)
+;;          (window-height . 0.25)
+;;          (side . bottom))))
+
 (setq display-buffer-alist
       `((,(concat "\\*.*"
                   "\\(Backtrace"
@@ -248,8 +272,8 @@ and `my-dark-theme'"
                   "\\|vterm"
                   "\\).*\\*")
          (display-buffer-in-side-window)
-         (window-height . 0.25)
-         (side . bottom))))
+         (window-width . 0.40)
+         (side . right))))
 
 (setq-default window-divider-default-places t)
 (setq-default window-divider-default-bottom-width 2)
@@ -286,7 +310,7 @@ and `my-dark-theme'"
                   org-document-info-keyword
                   org-meta-line))
     (set-face-attribute face nil
-                        :foreground nil
+                        :foreground 'unspecified
                         :inherit '(shadow fixed-pitch))))
 
 (use-package org
@@ -299,11 +323,15 @@ and `my-dark-theme'"
                 (if my-gnu/linux-laptop-p (flyspell-mode))
                 (org-indent-mode)
                 (visual-line-mode 1)))
+  :init
+  (if my-android-phone-p
+      (setq org-directory "~/storage/Org")
+    (setq org-directory "~/Org"))
+  :custom
+  (org-ellipsis " ▾")
+  (org-hide-emphasis-markers t)
+  (org-startup-folded 'overview)
   :config
-  (setq org-directory "~/Org")
-  (setq org-ellipsis " ▾")
-  (setq org-hide-emphasis-markers t)
-  (setq org-startup-folded 'overview)
   (require 'org-habit)
   (add-to-list 'org-modules 'org-habit)
   (setq org-habit-graph-column 60)
@@ -391,11 +419,40 @@ and `my-dark-theme'"
 
 (setq org-confirm-babel-evaluate nil)
 
-(setq c-basic-offset 2) ;; defined in cc.el
+(use-package org-roam
+  :init
+  (if my-android-phone-p
+      (setq org-roam-directory "~/storage/Notes")
+    (setq org-roam-directory "~/Notes"))
+  :custom
+  (org-roam-dailies-directory "Journal/")
+  (org-roam-db-location "~/.cache/org-roam.db")
+  :bind (("C-c n f" . org-roam-node-find)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n l" . org-roam-buffer-toggle)
+         :map org-mode-map
+         ("C-M-i" . completion-at-point)
+         :map org-roam-dailies-map
+         ("Y" . org-roam-dailies-capture-yesterday)
+         ("T" . org-roam-dailies-capture-tomorrow))
+  :bind-keymap
+  ("C-c n d" . org-roam-dailies-map)
+  :config
+  (require 'org-roam-dailies)
+  (org-roam-setup))
+
+(use-package editorconfig
+  :ensure t)
+
+(setq-default c-basic-offset 2)
+(setq-default indent-tabs-mode nil)
+(setq-default lsp-enable-indentation nil) ;; EXPERIMENTAL
+
 (add-hook 'prog-mode-hook
           (lambda ()
             ;;(local-set-key (kbd "C-<tab>") 'yas-expand)
             ;; (set-fringe-style 8)
+            (editorconfig-mode 1)
             (hl-line-mode)
             (electric-pair-local-mode)))
 
@@ -432,16 +489,34 @@ and `my-dark-theme'"
   (yas-reload-all))
 
 (use-package eglot
+  :disabled t
   :ensure nil
   :commands eglot
   :autoload eglot-ensure
-  :hook ((c-mode c++-mode python-mode) . eglot-ensure))
+  :config
+  (fset #'jsonrpc--log-event #'ignore)
+  (setq eglot-events-buffer-size 0)
+  (setq eglot-sync-connect nil)
+  (setq eglot-connect-timeout nil)
+  (setq eglot-autoshutdown t)
+  (setq eglot-send-changes-idle-time 3)
+  (setq eglot-ignored-server-capabilities '( :documentHighlightProvider)))
+
+;; exclude modes from eglot
+;; (defun maybe-start-eglot ()
+;;   "Exlude some mode from eglot."
+;;   (let ((disabled-modes '(emacs-lisp-mode dockerfile-ts-mode)))
+;;     (unless (apply 'derived-mode-p disabled-modes)
+;;       (eglot-ensure))))
+
+;; (add-hook 'prog-mode-hook #'maybe-start-eglot)
 
 (use-package lsp-mode
-  :disabled t
-  :commands (lsp lsp-deferred)
+  ;; :disabled t
+  :commands
+  (lsp lsp-deferred)
   :hook
-  (my-lsp-enabled-modes . lsp)
+  ((java-mode java-ts-mode python-mode python-ts-mode go-mode) . lsp)
   :init
   (setq lsp-headerline-breadcrumb-enable 'nil)
   (setq lsp-keymap-prefix "C-c l")
@@ -457,7 +532,7 @@ and `my-dark-theme'"
                   "--header-insertion-decorators=0")))
 
 (use-package lsp-ui
-  :disabled t
+  ;; :disabled t
   :after lsp-mode)
 
 (use-package multiple-cursors
@@ -469,7 +544,7 @@ and `my-dark-theme'"
 
 (use-package web-mode
   :mode ("\\.html?$" "\\.djhtml$" "\\.mustache\\'" "\\.phtml\\'"
-          "\\.as[cp]x\\'" "\\.erb\\'" "\\.hbs\\'")
+         "\\.as[cp]x\\'" "\\.erb\\'" "\\.hbs\\'" "\\.jsp\\'")
   :config
   (setq web-mode-markup-indent-offset 2)
   (setq web-mode-css-indent-offset 2)
@@ -481,6 +556,35 @@ and `my-dark-theme'"
 (use-package emmet-mode
   :hook (web-mode css-mode sgml-mode))
 
+(defun my-locate-virtual-environment-folder (&optional file-name)
+  "Check for virtual environment folder in the parent directories of FILE-NAME."
+  (let ((venv-names '(".venv" "venv"))
+        (file-name (or file-name (buffer-file-name)))
+        (venv-dir nil)
+        try)
+    (while (and venv-names (not venv-dir))
+      (setq try (locate-dominating-file file-name (car venv-names)))
+      (when try
+        (if (file-directory-p (concat try (car venv-names)))
+            (setq venv-dir (concat try (car venv-names)))))
+      (setq venv-names (cdr venv-names)))
+    venv-dir))
+
+(defun my-locate-and-activate-virtual-environment (&optional file-name)
+  "Locate and activate virtual environment folder for FILE-NAME.
+
+If nil, FILE-NAME defaults to the return value of function `buffer-file-name'."
+  (interactive)
+  (let* ((file-name (or file-name (buffer-file-name)))
+         (venv-dir (my-locate-virtual-environment-folder file-name)))
+    (if venv-dir
+        (progn (message "Activating virtual environment: '%s'" venv-dir)
+               (pyvenv-activate venv-dir)
+               venv-dir)
+      (message "Unable to find virtual environment for '%s'" file-name)
+      nil)))
+
+
 (use-package python
   :interpreter
   ("python" . python-mode)
@@ -488,7 +592,10 @@ and `my-dark-theme'"
 
 (use-package pyvenv
   :after python
-  :hook python-mode)
+  :hook (python-mode python-ts-mode)
+  :config
+  (add-hook 'pyvenv-mode-hook
+            #'my-locate-and-activate-virtual-environment))
 
 (use-package js
   :interpreter "node"
@@ -511,13 +618,16 @@ and `my-dark-theme'"
             (company-mode)))
 
 (use-package lsp-java
-  :disabled t
-  :after lsp-mode
-  :hook
-  (java-mode . lsp))
+  :after lsp-mode)
+
+(use-package java-ts-mode
+  :config
+  (setq java-ts-mode-indent-offset 2))
 
 (use-package eglot-java
-  ;; :hook java-mode
+  :disabled t
+  :init
+  (fset #'eglot-path-to-uri #'eglot--path-to-uri)
   :bind
   (:map eglot-java-mode-map
         ("C-c l n" . eglot-java-file-new)
@@ -525,18 +635,43 @@ and `my-dark-theme'"
         ("C-c l t" . eglot-java-run-test)
         ("C-c l N" . eglot-java-project-new)
         ("C-c l T" . eglot-java-project-build-task)
-        ("C-c l R" . eglot-java-project-build-refresh)))
+        ("C-c l R" . eglot-java-project-build-refresh))
+  :custom
+  (eglot-java-server-install-dir
+   (concat user-emacs-directory "var/eclipse.jdt.ls"))
+
+  (eglot-java-junit-platform-console-standalone-jar
+   (concat user-emacs-directory
+           "var/junit-platform-console-standalone"
+           "/junit-platform-console-standalone.jar"))
+  (eglot-java-eclipse-jdt-cache-directory
+   (concat user-emacs-directory "var/eglot-java-eclipse-jdt-cache")))
 
 (defvar my-google-java-format-jar-file
   (concat (file-name-as-directory (concat user-emacs-directory "var"))
           "google-java-format.jar")
   "Complete path of the google java formatter jar file.")
 
-(defun my-download-google-java-format-jar-file ()
-  "Download the google java formatter jar file from github."
+(defun my-download-latest-google-java-format-jar-file ()
+  "Download the latest google java formatter jar file from github."
   (interactive)
-  (url-copy-file "https://github.com/google/google-java-format/releases/download/v1.16.0/google-java-format-1.16.0-all-deps.jar"
-                 my-google-java-format-jar-file 1))
+  (require 'url)
+  (url-retrieve
+   "https://github.com/google/google-java-format/releases/latest"
+   (lambda (status)
+     (when (plist-get status :redirect)
+       (let* ((redirect-url (plist-get status :redirect))
+              (latest-version (substring redirect-url
+                                         (+ 2 (string-search "/v" redirect-url)))))
+         (my-download-google-java-format-jar-file latest-version))))))
+
+(defun my-download-google-java-format-jar-file (version)
+  "Download the google java formatter jar file of given VERSION from github."
+  (let ((url (format (concat "https://github.com"
+                             "/google/google-java-format"
+                             "/releases/download/v%s/google-java-format-%s-all-deps.jar")
+              version version)))
+    (url-copy-file url my-google-java-format-jar-file 1)))
 
 (defun my-format-java-buffer ()
   "Format current java buffer to comply with google style."
@@ -555,11 +690,20 @@ and `my-dark-theme'"
     (kill-buffer temp-buffer)
     (delete-file temp-file)))
 
+(add-hook 'java-mode-hook #'(lambda () (local-set-key (kbd "C-c l f") #'my-format-java-buffer)))
+(add-hook 'java-ts-mode-hook #'(lambda () (local-set-key (kbd "C-c l f") #'my-format-java-buffer)))
+
+(use-package go-ts-mode
+  :ensure nil
+  :mode "\\.go\\'"
+  :hook (go-ts-mode . format-all-mode))
+
 (use-package format-all
   :commands (format-all-buffer format-all-region format-all-mode)
   :autoload fomat-all-ensure-formatter
   :hook
   (prog-mode . format-all-ensure-formatter)
+  (python-ts-mode . format-all-mode)
   :config
   (setq-default format-all-formatters
                 '(("C" (clang-format "-style=file"))
@@ -576,6 +720,15 @@ and `my-dark-theme'"
 
 (use-package restclient
   :commands (restclient-mode))
+
+(setq major-mode-remap-alist
+      '((yaml-mode . yaml-ts-mode)
+        (bash-mode . bash-ts-mode)
+        (js-mode . js-ts-mode)
+        (typescript-mode . typescript-ts-mode)
+        (json-mode . json-ts-mode)
+        (css-mode . css-ts-mode)
+        (python-mode . python-ts-mode)))
 
 (use-package dired
   :ensure nil
@@ -596,23 +749,13 @@ and `my-dark-theme'"
                       (all-the-icons-dired-mode)))))
 
 (use-package tab-bar
-  :ensure nil
   :config
-  ;; set better faces for tabs
-  ;; (set-face-attribute 'tab-bar nil :inherit 'mode-line)
-  ;; (set-face-attribute 'tab-bar-tab nil
-  ;;                     :weight 'bold
-  ;;                     :slant 'italic
-  ;;                     :underline t
-  ;;                     :foreground "#aaee77")
-  ;; (set-face-attribute 'tab-bar-tab-inactive nil
-  ;;                     :slant 'italic
-  ;;                     :foreground "#afafaf")
   (setq tab-bar-show nil)  ;; don't show the tab-bar
   (setq tab-bar-new-tab-choice t) ;; open the current buffer in new tab
   (setq tab-bar-close-button-show nil)
   (setq tab-bar-new-button-show nil)
-  (setq tab-bar-close-last-tab-choice 'tab-bar-mode-disable))
+  (setq tab-bar-close-last-tab-choice 'tab-bar-mode-disable)
+  (tab-bar-mode))
 
 (global-unset-key (kbd "C-x C-b"))
 (global-set-key (kbd "C-x C-b") 'ibuffer)
@@ -761,8 +904,15 @@ and `my-dark-theme'"
 (setq initial-buffer-choice
       (lambda () (get-buffer "*dashboard*")))
 
+(defun my-toggle-titlebar ()
+  "Toggle titlebar from selected frame."
+  (interactive)
+  (let* ((frame (selected-frame))
+         (visibility (frame-parameter frame 'undecorated)))
+    (set-frame-parameter frame 'undecorated (not visibility))))
+
 (add-hook 'server-after-make-frame-hook
-                       #'my-set-font-faces)
+          #'my-set-font-faces)
 
 ;; Lower the GC threshold, again
 (setq gc-cons-threshold 16000000)

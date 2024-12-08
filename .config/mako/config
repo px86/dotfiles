@@ -1,0 +1,29 @@
+
+font="monospace 10"
+
+text-color=#ffffffff
+background-color=#00000099
+
+border-size=2
+border-radius=5
+border-color=#ffffff22
+
+default-timeout=8000
+
+width=300
+height=250
+padding=10,20
+margin=4,0
+outer-margin=4,10
+
+icons=1
+icon-location=left
+max-icon-size=64
+icon-path=/usr/share/icons/ePapirus:/usr/share/icons/Papirus-Dark:/usr/share/icons/Adwaita
+
+layer=overlay
+anchor=top-right
+
+max-history=5
+
+on-notify=exec mpv /usr/share/sounds/freedesktop/stereo/message.oga

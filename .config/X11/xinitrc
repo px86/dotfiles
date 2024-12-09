@@ -1,9 +1,0 @@
-xwallpaper --zoom ~/.local/data/wallpaper
-dunst &
-picom &
-xrdb ~/.config/X11/Xresources
-xmodmap ~/.config/X11/xmodmaprc
-sh ~/.config/X11/touchpad.sh
-emacs --daemon &
-exec qtile start
-#exec awesome

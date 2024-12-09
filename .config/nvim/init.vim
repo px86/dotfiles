@@ -33,13 +33,16 @@ set splitbelow
 set splitright
 set hidden
 
-set termguicolors
+"set termguicolors
+set notermguicolors
 set cursorline
+
 "set laststatus=2
 set laststatus=0
 
-set background=dark
-colorscheme dracula
+"set background=dark
+colorscheme default
+set t_co=16
 
 set noshowmode
 

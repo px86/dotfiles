@@ -1,0 +1,38 @@
+configuration {
+    font                     : "Cascadia Code Italic 11";
+    show-icons               : true;
+    disable-history          : false;
+    sidebar-mode             : false;
+    hover-select             : true;
+    fixed-num-lines          : true;
+    cycle                    : true;
+    modes                    : "window,drun,run,ssh";
+    combi-modes              : "window,run";
+    icon-theme               : "hicolor";
+    drun-match-fields        : "name,generic,exec,categories,keywords";
+    terminal                 : "rofi-sensible-terminal";
+    ssh-client               : "ssh";
+    ssh-command              : "{terminal} -e {ssh-client} {host} [-p {port}]";
+    run-command              : "{cmd}";
+    run-list-command         : "";
+    run-shell-command        : "{terminal} -e {cmd}";
+    window-command           : "wmctrl -i -R {window}";
+    display-window           : "";
+    display-run              : "";
+    display-ssh              : "";
+    display-drun             : "";
+    display-combi            : "";
+    display-keys             : "";
+    display-filebrowser      : "";
+    display-recursivebrowser : "";
+    timeout {
+        action               : "kb-cancel";
+        delay                :  0;
+    }
+    filebrowser {
+        directories-first    : true;
+        sorting-method       :    "name";
+    }
+}
+
+@import "style.rasi"

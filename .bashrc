@@ -44,7 +44,7 @@ alias la="exa -als extension --group-directories-first"
 alias grep="grep --color=auto"
 alias q="exit"
 alias ec="emacsclient -ta 'emacs -nw'"
-alias yta="youtube-dl -x -f bestaudio/best"
+alias yta='yt-dlp -x --embed-metadata --replace-in-metadata "title" " *(\(?[Oo]fficial)?.*([Vv]ideo|[Aa]udio|[Vv]isualizer)\)?" "" '
 
 # git bare repository setup for dotfiles management
 alias dotfile="git --git-dir=$HOME/.local/dotfiles.git --work-tree=$HOME"

@@ -1,29 +1,40 @@
+font=sans-serif 11
 
-font="monospace 10"
+markup=1
 
-text-color=#ffffffff
-background-color=#00000099
+format=<span rise='30000' underline='single' font_desc='8' foreground='#afafaf'>%a</span>\n<span font_desc='12' weight='bold' foreground='#b48eadee'>%s</span>\n%b\n
 
+text-alignment=right
 border-size=2
-border-radius=5
-border-color=#ffffff22
+border-radius=8
 
-default-timeout=8000
+default-timeout=3500
+ignore-timeout=0
 
 width=300
 height=250
-padding=10,20
+padding=10
 margin=4,0
-outer-margin=4,10
+outer-margin=4,7
 
 icons=1
 icon-location=left
-max-icon-size=64
-icon-path=/usr/share/icons/ePapirus:/usr/share/icons/Papirus-Dark:/usr/share/icons/Adwaita
+max-icon-size=128
+
+icon-path=/usr/share/icons/Pop/64x64:/usr/share/icons/ePapirus/64x64:/usr/share/icons/Papirus-Dark/64x64:/usr/share/icons/Adwaita/64x64:/usr/share/icons/Pop:/usr/share/icons/ePapirus:/usr/share/icons/Papirus-Dark:/usr/share/icons/Adwaita
 
 layer=overlay
 anchor=top-right
 
+history=1
 max-history=5
 
-on-notify=exec mpv /usr/share/sounds/freedesktop/stereo/message.oga
+actions=1
+
+#on-notify=exec mpv /usr/share/sounds/freedesktop/stereo/message.oga
+
+on-button-left=exec makoctl invoke -n "$id" default
+on-button-middle=exec makoctl menu -n "$id" rofi -dmenu -p "Select option: "
+on-button-right=dismiss
+
+include=~/.config/mako/theme

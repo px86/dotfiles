@@ -1,5 +1,5 @@
 configuration {
-    font                     : "Cascadia Code Italic 11";
+    font                     : "Cascadia Code 11";
     show-icons               : true;
     disable-history          : false;
     sidebar-mode             : false;

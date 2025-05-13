@@ -1,7 +1,7 @@
 * {
     foreground: #f8f8f2;
     background-color: rgba(0, 0, 0, 0);
-    background-window: rgba(0, 0, 0, 0.9);
+    background-window: rgba(0, 0, 0, 0.8);
     active-background: #318EAE;
     urgent-background: #ff5555;
     urgent-foreground: #282a36;

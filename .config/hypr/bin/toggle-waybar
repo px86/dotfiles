@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+if pgrep -x "waybar" > /dev/null; then
+    killall -q waybar
+else
+    notify-send --expire-time 1200 --icon wayland "Starting Waybar..." &
+    waybar > /dev/null 2>&1 &
+fi

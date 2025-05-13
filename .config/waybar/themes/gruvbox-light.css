@@ -1,0 +1,12 @@
+@define-color foreground #3c3836;
+@define-color background rgba(251, 241, 199, 0.95);
+
+@define-color foreground-alt #504945;
+@define-color background-alt #fbf1c7;
+
+@define-color okay     rgba(184, 187, 38, 0.7);
+@define-color critical rgba(204, 36, 29, 0.7);
+@define-color warning  rgba(215, 153, 33, 0.7);
+@define-color outline  rgba(131, 165, 152, 1.0);
+
+@import "bar-style.css";

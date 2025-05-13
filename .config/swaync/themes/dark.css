@@ -1,0 +1,14 @@
+@define-color cc-bg rgb(0, 0, 0);                       /* True black background */
+@define-color noti-border-color rgb(91, 98, 114);       /* regular0 */
+@define-color noti-bg rgb(14, 20, 32);                  /* alternative dark background (commented in config) */
+@define-color noti-bg-opaque rgb(14, 20, 32);
+@define-color noti-bg-darker rgb(0, 0, 0);              /* for deep shadows or hover contrast */
+@define-color noti-bg-hover rgb(28, 36, 50);            /* ~20% lighter than noti-bg */
+@define-color noti-bg-hover-opaque rgb(28, 36, 50);
+@define-color noti-bg-focus rgba(129, 161, 193, 0.2);   /* regular4 (blue) for focus highlight */
+@define-color noti-close-bg rgba(229, 233, 240, 0.05);  /* regular7 */
+@define-color noti-close-bg-hover rgba(229, 233, 240, 0.10);
+
+@define-color text-color rgb(219, 222, 233);            /* foreground */
+@define-color text-color-disabled rgb(91, 98, 114);     /* regular0 (muted) */
+@define-color bg-selected rgb(143, 188, 187);           /* bright6 – accent green/blue for selection */

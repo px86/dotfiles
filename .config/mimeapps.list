@@ -2,6 +2,8 @@
 application/pdf=org.pwmt.zathura-pdf-poppler.desktop
 image/png=imv.desktop
 image/jpeg=imv.desktop
+application/pgp-keys=emacsclient.desktop
 
 [Added Associations]
 application/pdf=org.pwmt.zathura-pdf-poppler.desktop;
+application/pgp-keys=emacsclient.desktop;
